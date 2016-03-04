@@ -1,11 +1,11 @@
 body {
-	margin: 0px;
-	padding: 0px;
-	overflow: hidden;
-	background: #FFFFFF;
-	font-family: verdana,arial,helvetica,sans-serif;
-	font-size: 11px;
-	color: #000000;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    background: #FFFFFF;
+    font-family: verdana,arial,helvetica,sans-serif;
+    font-size: 11px;
+    color: #000000;
     -webkit-user-select: none; /* webkit (safari, chrome) browsers */
     -moz-user-select: none; /* mozilla browsers */
     -khtml-user-select: none; /* webkit (konqueror) browsers */
@@ -15,10 +15,29 @@ body {
 #stage {
     width:900px;
     height:600px;
+    /* background: #FFFFFF; */
+}
+
+#stage, #debugCanvas {
+    z-index: 1;
     margin-left:10px;
     margin-top:10px;
     border-style:dotted;
     border-width:1px;
-    background: #FFFFFF;
 }
 
+#debugCanvas {
+    z-index: 2;
+    /* display: none; */
+    position: absolute;
+    left:0;
+}
+
+.button {
+    width: 250px;
+    height: 25px;
+    background-color: #5fd644;
+    cursor: pointer;
+    text-align: center;
+    padding-top:5px;
+}
