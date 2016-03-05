@@ -50,7 +50,9 @@ var debugContext = null;
 
   $('#debug').on('click', function() {
     $('#debugCanvas').toggle();
-    setCookie(debug, !debugging, 30);
+    console.log('debug button clicked');
+    debugging = (debugging) ? false : true;
+    setCookie('debug', debugging, 30);
   });
 
   // ------------------------------------------------------------ event handlers
@@ -58,8 +60,18 @@ var debugContext = null;
   function onInit() {
     console.log('>> initializing');
 
-    debugging = (getCookie(debug)) ? true : false;
-    if (debugging) {
+    if ((getCookie('debug') === '') || (getCookie('debug') === 'false')) {
+      debugging = false;
+      console.log('cookie not found');
+    } else if (getCookie('debug') === 'true') {
+      debugging = true;
+      console.log('cookie found and the value is: ' + debugging);
+    }
+
+    setCookie('debug', debugging, 30);
+    //debugging = (getCookie('debug')) ? true : false;
+    if (debugging === true) {
+      console.log('debugger enabled' + debugging);
       $('#debugCanvas').toggle();
     }
     setupCanvas();
@@ -172,7 +184,7 @@ var debugContext = null;
     platform = assetManager.getSprite('gameAssets');
 
     b2d.setup(platform, 'floor');
-    b2d.addDebug();
+
     // add snake to the stage
     dude = assetManager.getSprite('gameAssets');
     dude.x = 200;
@@ -196,18 +208,37 @@ var debugContext = null;
     floor.gotoAndPlay('platform');
     stage.addChildAt(floor, 1);
 
+    //b2d.addDebug();
+
+    txt = new createjs.Text('', '12px Arial', '#111');
+    txt.lineWidth = 550;
+    txt.lineHeight = 22;
+    txt.textBaseline = 'top';
+    txt.textAlign = 'left';
+    txt.y = 15;
+    txt.x = 15;
+
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addEventListener('tick', onTick);
   }
 
+  var txt = null;
   function onTick(e) {
     // TESTING FPS
-    document.getElementById('fps').innerHTML = createjs.Ticker.getMeasuredFPS();
+    //document.getElementById('fps').innerHTML = createjs.Ticker.getMeasuredFPS();
 
     // put your other stuff here!
     // ...
-
+    //console.log(debugging);
+    if (debugging) {
+      stage.addChild(txt);
+      txt.visible = true;
+      txt.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
+    } else {
+      stage.removeChild(txt);
+      txt.visible = false;
+    }
     // update the stage!
     move();
     b2d.update();

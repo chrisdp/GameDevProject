@@ -34,6 +34,10 @@ var B2d = function() {
     var secondObjectID = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+      //console.log(contact.GetFixtureA().GetBody().GetUserData());
+      //console.log(contact.GetFixtureB().GetBody().GetUserData());
+      console.log(contact.GetFixtureA().GetBody());
+      console.log(contact.GetFixtureB().GetBody().GetPosition());
       if (secondObjectID !== null) {
         if (secondObjectID === 'floor') {
           touchingFloor = true;
@@ -67,11 +71,11 @@ var B2d = function() {
   };
 
   listener.PostSolve = function(contact, impulse) {
-
+    //console.log(impulse);
   };
 
   listener.PreSolve = function(contact, oldManifold) {
-
+    //console.log(contact);
   };
 
   // box2d world setup and boundaries
@@ -126,6 +130,19 @@ var B2d = function() {
     debugDraw.SetFillAlpha(0.7);
     debugDraw.SetLineThickness(1.0);
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+    //if (bodies[0] != undefined) {
+    if (false) {
+      var pos = bodies[0].GetPosition();
+      var angle = bodies[0].GetAngle();
+      var vel = bodies[0].GetLinearVelocity();
+      var angularVel = bodies[0].GetAngularVelocity();
+      debugDraw.DrawString(5, m_textLine,
+                           'Position:%.3f,%.3f Angle:%.3f', pos.x, pos.y, angle * RADTODEG);
+      m_textLine += 15;
+      m_debugDraw.DrawString(5, m_textLine,
+                             'Velocity:%.3f,%.3f Angular velocity:%.3f', vel.x, vel.y, angularVel * RADTODEG);
+      m_textLine += 15;
+    }
     world.SetDebugDraw(debugDraw);
   };
 
@@ -188,7 +205,16 @@ var B2d = function() {
     spriteBodyDef.position.x = skin.x / SCALE;
     spriteBodyDef.position.y = skin.y / SCALE;
     var sprite = world.CreateBody(spriteBodyDef);
+
     sprite.CreateFixture(spriteFixture);
+    //    spriteFixture = new b2FixtureDef;
+    //    spriteFixture.density = 0;
+    //    spriteFixture.restitution = 0;
+    //    spriteFixture.shape = new b2PolygonShape;
+    //    spriteFixture.shape.SetAsBox(0.5, 0.2, new b2Vec2(1.2, 3.4));
+    //    spriteFixture.shape.m_centroid.x = 10;
+    //    console.log(spriteFixture);
+    //    sprite.CreateFixture(spriteFixture);
 
     // assign actor
     var actor = new actorObject(sprite, skin, spriteId);
