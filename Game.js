@@ -57,8 +57,6 @@ var debugContext = null;
     setupCanvas();
 
     b2d = new B2d();
-    b2d.setup();
-    b2d.addDebug();
     // construct preloader object to load spritesheet and sound assets
     assetManager = new AssetManager(stage);
     stage.addEventListener('onAllAssetsLoaded', onReady);
@@ -162,6 +160,16 @@ var debugContext = null;
     // kill event listener
     stage.removeEventListener('onAllAssetsLoaded', onReady);
 
+    platform = assetManager.getSprite('gameAssets');
+    platform.x = 0;
+    platform.y = 570;
+    platform.scaleX = 2.3;
+    console.log(platform.getBounds());
+    platform.gotoAndPlay('platform');
+    stage.addChildAt(platform, 1);
+
+    b2d.setup(platform, 'floor');
+    b2d.addDebug();
     // add snake to the stage
     dude = assetManager.getSprite('gameAssets');
     dude.x = 200;
@@ -179,14 +187,6 @@ var debugContext = null;
     stage.addChildAt(baddy, 0);
     b2d.spriteMake(baddy, 14, 15, 'baddy');
     //b2d.createBaddy(baddy);
-
-    platform = assetManager.getSprite('gameAssets');
-    platform.x = 0;
-    platform.y = 570;
-    platform.scaleX = 2.3;
-    console.log(platform.getBounds());
-    platform.gotoAndPlay('platform');
-    stage.addChildAt(platform, 1);
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;

@@ -23,13 +23,20 @@ var B2d = function() {
   var actors = [];
   var bodies = [];
 
+  // state vars
+  var touchingDown = false;
+
   // colision detetors
-  var listener = new Box2D.Dynamics.b2ContactListener;
+  var listener = new Box2D.Dynamics.b2ContactListener();
   listener.BeginContact = function(contact) {
     var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
     var secondObjectID = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+      if (secondObjectID === 'floor') {
+        touchingDown = true;
+        console.log(touchingDown);
+      }
     }
     if (secondObjectID !== null) {
       if ((firstObjectID === 'player') &&  (secondObjectID === 'baddy')) {
@@ -39,7 +46,15 @@ var B2d = function() {
   };
 
   listener.EndContact = function(contact) {
-    //console.log(contact.GetFixtureA().GetBody().GetUserData());
+    var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
+    var secondObjectID = null;
+    if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
+      secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+      if (secondObjectID === 'floor') {
+        touchingDown = false;
+        console.log(touchingDown);
+      }
+    }
   };
 
   listener.PostSolve = function(contact, impulse) {
@@ -51,7 +66,7 @@ var B2d = function() {
   };
 
   // box2d world setup and boundaries
-  var setup = function() {
+  var setup = function(platform, spriteId) {
     world = new b2World(new b2Vec2(0,10), true);
     world.SetContactListener(listener);
     addDebug();
@@ -67,6 +82,11 @@ var B2d = function() {
     floorBodyDef.position.y = 582 / SCALE;
     var floor = world.CreateBody(floorBodyDef);
     floor.CreateFixture(floorFixture);
+
+    // assign actor for floor
+    var actor = new actorObject(floor, platform, spriteId);
+    actor.id = spriteId;
+    floor.SetUserData(actor);
     // boundaries - left
     var leftFixture = new b2FixtureDef;
     leftFixture.shape = new b2PolygonShape;
@@ -232,7 +252,9 @@ var B2d = function() {
       }
       break;
     case 'up':
-      forceY = -200;
+      if (touchingDown) {
+        forceY = -200;
+      }
       break;
     case 'down':
       forceY = 100;
