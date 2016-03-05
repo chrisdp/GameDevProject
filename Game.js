@@ -29,6 +29,8 @@ var debugContext = null;
   var baddy = null;
   var platform = null;
   var star = null;
+  var setup = null;
+  var b2d = null;
 
   // keyboard key map
   var KEYCODE_LEFT = 37;
@@ -43,12 +45,18 @@ var debugContext = null;
   var downArrow = false;
 
   // ------------------------------------------------------------ show the debugger
-  $('#debug').on('click', function() { $('#debugCanvas').toggle(); });  // toggle debug view
+  $('#debug').on('click', function() {
+    $('#debugCanvas').toggle();
+  });
 
   // ------------------------------------------------------------ event handlers
+
   function onInit() {
     console.log('>> initializing');
-    setup.canvas();
+
+    setupCanvas();
+
+    b2d = new B2d();
     b2d.setup();
     b2d.addDebug();
     // construct preloader object to load spritesheet and sound assets
@@ -57,42 +65,29 @@ var debugContext = null;
 
     // load the assets
     assetManager.loadAssets(manifest);
+
+    //keyboard handlers
+    window.onkeyup = keyUpHandler;
+    window.onkeydown = keyDownHandler;
   }
 
-  var setup = (function() {
+  function setupCanvas() {
+    // get reference to canvas
+    canvas = document.getElementById('stage');
+    debugCanvas = document.getElementById('debugCanvas');
 
-    var canvas = function() {
-      // get reference to canvas
-      canvas = document.getElementById('stage');
-      debugCanvas = document.getElementById('debugCanvas');
+    // set canvas to as wide/high as the browser window
+    canvas.width = 900;
+    canvas.height = 600;
 
-      // set canvas to as wide/high as the browser window
-      canvas.width = 900;
-      canvas.height = 600;
+    // create stage object
+    stage = new createjs.Stage(canvas);
 
-      // create stage object
-      stage = new createjs.Stage(canvas);
+    context = canvas.getContext('2d');
+    debugContext = debugCanvas.getContext('2d');
+    stage.snapPixelsEnabled = true;
 
-      context = canvas.getContext('2d');
-      debugContext = debugCanvas.getContext('2d');
-      stage.snapPixelsEnabled = true;
-
-      //keyboard handlers
-      window.onkeyup = keyUpHandler;
-      window.onkeydown = keyDownHandler;
-    };
-
-    var ticker = function() {
-      createjs.Ticker.setFPS(frameRate);
-      createjs.Ticker.useRAF = true;
-      createjs.Ticker.addEventListener('tick', onTick);
-    };
-
-    return {
-      canvas: canvas,
-      ticker: ticker
-    };
-  })();
+  }
 
   function keyDownHandler(e) {
     switch (e.keyCode) {
@@ -126,11 +121,9 @@ var debugContext = null;
     switch (e.keyCode) {
     case KEYCODE_LEFT:
       leftArrow = false;
-      //dude.gotoAndPlay('dudeIdile');
       break;
     case KEYCODE_RIGHT:
       rightArrow = false;
-      //dude.gotoAndPlay('dudeIdile');
       break;
     case KEYCODE_UP:
       upArrow = false;
@@ -176,7 +169,7 @@ var debugContext = null;
     console.log(dude);
     dude.gotoAndPlay('dudeIdile');
     stage.addChild(dude);
-    b2d.spriteMake(dude, 14, 23);
+    b2d.spriteMake(dude, 14, 23, 'player');
     //b2d.createPlayer(dude);
 
     baddy = assetManager.getSprite('gameAssets');
@@ -184,7 +177,7 @@ var debugContext = null;
     baddy.y = 300;
     baddy.gotoAndPlay('moveLeft');
     stage.addChildAt(baddy, 0);
-    b2d.spriteMake(baddy, 14, 15);
+    b2d.spriteMake(baddy, 14, 15, 'baddy');
     //b2d.createBaddy(baddy);
 
     platform = assetManager.getSprite('gameAssets');
@@ -195,7 +188,9 @@ var debugContext = null;
     platform.gotoAndPlay('platform');
     stage.addChildAt(platform, 1);
 
-    setup.ticker();
+    createjs.Ticker.setFPS(24);
+    createjs.Ticker.useRAF = true;
+    createjs.Ticker.addEventListener('tick', onTick);
   }
 
   function onTick(e) {
