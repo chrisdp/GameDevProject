@@ -25,6 +25,7 @@ var B2d = function() {
 
   // state vars
   var touchingDown = false;
+  var touchingFloor = false;
 
   // colision detetors
   var listener = new Box2D.Dynamics.b2ContactListener();
@@ -34,6 +35,9 @@ var B2d = function() {
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
       if (secondObjectID !== null) {
+        if (secondObjectID === 'floor') {
+          touchingFloor = true;
+        }
         touchingDown = true;
         console.log(touchingDown);
       }
@@ -51,7 +55,12 @@ var B2d = function() {
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
       if (secondObjectID !== null) {
-        touchingDown = false;
+        if (secondObjectID === 'floor') {
+          touchingFloor = false;
+        }
+        if (!touchingFloor) {
+          touchingDown = false;
+        }
         console.log(touchingDown);
       }
     }
