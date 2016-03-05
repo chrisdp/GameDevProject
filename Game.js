@@ -46,8 +46,11 @@ var debugContext = null;
   var downArrow = false;
 
   // ------------------------------------------------------------ show the debugger
+  var debugging;
+
   $('#debug').on('click', function() {
     $('#debugCanvas').toggle();
+    setCookie(debug, !debugging, 30);
   });
 
   // ------------------------------------------------------------ event handlers
@@ -55,6 +58,10 @@ var debugContext = null;
   function onInit() {
     console.log('>> initializing');
 
+    debugging = (getCookie(debug)) ? true : false;
+    if (debugging) {
+      $('#debugCanvas').toggle();
+    }
     setupCanvas();
 
     b2d = new B2d();
@@ -208,3 +215,25 @@ var debugContext = null;
   }
 
 })();
+
+function setCookie(cname, cvalue, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  var expires = 'expires=' + d.toUTCString();
+  document.cookie = cname + '=' + cvalue + '; ' + expires;
+}
+
+function getCookie(cname) {
+  var name = cname + '=';
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
