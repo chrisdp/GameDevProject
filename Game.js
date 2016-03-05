@@ -28,6 +28,7 @@ var debugContext = null;
   var dude = null;
   var baddy = null;
   var platform = null;
+  var floor = null;
   var star = null;
   var setup = null;
   var b2d = null;
@@ -160,13 +161,8 @@ var debugContext = null;
     // kill event listener
     stage.removeEventListener('onAllAssetsLoaded', onReady);
 
+    // setup sprite to act as a floor skin
     platform = assetManager.getSprite('gameAssets');
-    platform.x = 0;
-    platform.y = 570;
-    platform.scaleX = 2.3;
-    console.log(platform.getBounds());
-    platform.gotoAndPlay('platform');
-    stage.addChildAt(platform, 1);
 
     b2d.setup(platform, 'floor');
     b2d.addDebug();
@@ -178,7 +174,6 @@ var debugContext = null;
     dude.gotoAndPlay('dudeIdile');
     stage.addChild(dude);
     b2d.spriteMake(dude, 14, 23, 'player');
-    //b2d.createPlayer(dude);
 
     baddy = assetManager.getSprite('gameAssets');
     baddy.x = 300;
@@ -186,7 +181,13 @@ var debugContext = null;
     baddy.gotoAndPlay('moveLeft');
     stage.addChildAt(baddy, 0);
     b2d.spriteMake(baddy, 14, 15, 'baddy');
-    //b2d.createBaddy(baddy);
+
+    floor = assetManager.getSprite('gameAssets');
+    floor.x = 0;
+    floor.y = 570;
+    floor.scaleX = 2.3;
+    floor.gotoAndPlay('platform');
+    stage.addChildAt(floor, 1);
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;

@@ -33,7 +33,7 @@ var B2d = function() {
     var secondObjectID = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
-      if (secondObjectID === 'floor') {
+      if (secondObjectID !== null) {
         touchingDown = true;
         console.log(touchingDown);
       }
@@ -50,7 +50,7 @@ var B2d = function() {
     var secondObjectID = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
-      if (secondObjectID === 'floor') {
+      if (secondObjectID !== null) {
         touchingDown = false;
         console.log(touchingDown);
       }
@@ -172,7 +172,7 @@ var B2d = function() {
     spriteFixture.restitution = 0.1;
     spriteFixture.shape = new b2PolygonShape;
     spriteFixture.shape.SetAsBox(xScale / SCALE, yScale / SCALE);
-    //playerFixture.shape = new b2CircleShape(24 / SCALE);
+
     var spriteBodyDef = new b2BodyDef;
     spriteBodyDef.type = b2Body.b2_dynamicBody;
     spriteBodyDef.fixedRotation = true;
@@ -186,51 +186,6 @@ var B2d = function() {
     actor.id = spriteId;
     sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
     bodies.push(sprite);
-  };
-
-  // create sprite body shape and assign actor object
-  var createPlayer = function(skin) {
-    var playerFixture = new b2FixtureDef;
-    playerFixture.density = 1;
-    playerFixture.restitution = 0.1;
-    playerFixture.shape = new b2PolygonShape;
-    playerFixture.shape.SetAsBox(14 / SCALE, 23 / SCALE);
-    //playerFixture.shape = new b2CircleShape(24 / SCALE);
-    var playerBodyDef = new b2BodyDef;
-    playerBodyDef.type = b2Body.b2_dynamicBody;
-    playerBodyDef.fixedRotation = true;
-    playerBodyDef.position.x = skin.x / SCALE;
-    playerBodyDef.position.y = skin.y / SCALE;
-    var player = world.CreateBody(playerBodyDef);
-    player.CreateFixture(playerFixture);
-
-    // assign actor
-    var actor = new actorObject(player, skin);
-    actor.id = id;
-    player.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
-    bodies.push(player);
-  };
-
-  // create bird body shape and assign actor object
-  var createBaddy = function(skin) {
-    var baddyFixture = new b2FixtureDef;
-    baddyFixture.density = 1;
-    baddyFixture.restitution = 0.1;
-    baddyFixture.shape = new b2PolygonShape;
-    baddyFixture.shape.SetAsBox(14 / SCALE, 15 / SCALE);
-    //playerFixture.shape = new b2CircleShape(24 / SCALE);
-    var baddyBodyDef = new b2BodyDef;
-    baddyBodyDef.type = b2Body.b2_dynamicBody;
-    baddyBodyDef.fixedRotation = true;
-    baddyBodyDef.position.x = skin.x / SCALE;
-    baddyBodyDef.position.y = skin.y / SCALE;
-    var baddy = world.CreateBody(baddyBodyDef);
-    baddy.CreateFixture(baddyFixture);
-
-    // assign actor
-    var actor = new actorObject(baddy, skin);
-    baddy.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
-    bodies.push(baddy);
   };
 
   var movePlayer = function(where) {
@@ -268,8 +223,6 @@ var B2d = function() {
     addDebug: addDebug,
     update: update,
     spriteMake: spriteMake,
-    createPlayer: createPlayer,
-    createBaddy: createBaddy,
     movePlayer: movePlayer
   };
 };
