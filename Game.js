@@ -25,6 +25,7 @@ var debugContext = null;
 
   // game objects
   var assetManager = null;
+  var backdrop = null;
   var dude = null;
   var baddy = null;
   var platform = null;
@@ -179,26 +180,45 @@ var debugContext = null;
     console.log('>> setup');
     // kill event listener
     stage.removeEventListener('onAllAssetsLoaded', onReady);
-
+    var sSheet = 'gameAssets';
     // setup sprite to act as a floor skin
-    platform = assetManager.getSprite('gameAssets');
+    platform = assetManager.getSprite(sSheet);
 
     b2d.setup(platform, 'floor');
 
+    backdrop = assetManager.getSprite(sSheet);
+    backdrop.x = 0;
+    backdrop.y = 0;
+    backdrop.scaleY = 1;
+    backdrop.scaleX = 1.2;
+    backdrop.gotoAndPlay('sky');
+    stage.addChild(backdrop);
+
     // add snake to the stage
-    dude = assetManager.getSprite('gameAssets');
+    dude = assetManager.getSprite(sSheet);
     dude.x = 200;
     dude.y = 200;
-    console.log(dude);
+    //console.log(dude);
+
+    // h = 23
     dude.gotoAndPlay('dudeIdile');
     stage.addChild(dude);
     b2d.spriteMake(dude, 14, 23, 'player');
+
+    /*
+    var shape = new createjs.Shape();
+    var SIZE = 2;
+    var centerX = 200;
+    var centerY = 548.775;
+    shape.graphics.beginFill('red').drawRect(centerX - SIZE / 2, centerY - SIZE / 2, SIZE, SIZE);
+    stage.addChild(shape);
+    */
 
     baddy = assetManager.getSprite('gameAssets');
     baddy.x = 300;
     baddy.y = 300;
     baddy.gotoAndPlay('moveLeft');
-    stage.addChildAt(baddy, 0);
+    stage.addChild(baddy);
     b2d.spriteMake(baddy, 14, 15, 'baddy');
 
     floor = assetManager.getSprite('gameAssets');
@@ -212,7 +232,7 @@ var debugContext = null;
 
     txt = new createjs.Text('', '12px Arial', '#111');
     txt.lineWidth = 550;
-    txt.lineHeight = 22;
+    txt.lineHeight = 15;
     txt.textBaseline = 'top';
     txt.textAlign = 'left';
     txt.y = 15;
@@ -234,7 +254,17 @@ var debugContext = null;
     if (debugging) {
       stage.addChild(txt);
       txt.visible = true;
+      var data = b2d.playerData();
       txt.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
+      txt.text += '\nX: ' + data.pos.x;
+      txt.text += '\nY: ' + data.pos.y;
+      //txt.text += '\nangle: ' + data.angle;
+      txt.text += '\nvelocity X: ' + data.vel.x;
+      txt.text += '\nvelocity Y: ' + data.vel.y;
+      txt.text += '\non floor: ' + data.touchingFloor;
+      txt.text += '\ncan jump: ' + data.touchingDown;
+      txt.text += '\nside hit: ' + data.sideHit;
+      //txt.text += '\nangular velocity: ' + data.angularVel;
     } else {
       stage.removeChild(txt);
       txt.visible = false;

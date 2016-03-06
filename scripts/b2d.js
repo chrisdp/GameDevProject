@@ -26,29 +26,72 @@ var B2d = function() {
   // state vars
   var touchingDown = false;
   var touchingFloor = false;
-
+  var sideHit = null;
   // colision detetors
   var listener = new Box2D.Dynamics.b2ContactListener();
   listener.BeginContact = function(contact) {
-    var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
-    var secondObjectID = null;
+    var firstObject = contact.GetFixtureA().GetBody().GetUserData();
+    var firstSkin = contact.GetFixtureA().GetBody().GetUserData().skin;
+    var secondObject = null;
+    var secondSkin = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
-      secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+      secondObject = contact.GetFixtureB().GetBody().GetUserData();
+      secondSkin = contact.GetFixtureB().GetBody().GetUserData().skin;
       //console.log(contact.GetFixtureA().GetBody().GetUserData());
       //console.log(contact.GetFixtureB().GetBody().GetUserData());
-      console.log(contact.GetFixtureA().GetBody());
-      console.log(contact.GetFixtureB().GetBody().GetPosition());
-      if (secondObjectID !== null) {
-        if (secondObjectID === 'floor') {
+      //console.log(contact.GetFixtureA().GetBody());
+      //console.log(contact.GetFixtureB().GetBody().GetPosition());
+      if (secondObject.id !== null) {
+        if (secondObject.id === 'floor') {
           touchingFloor = true;
         }
         touchingDown = true;
-        console.log(touchingDown);
+        //console.log(touchingDown);
       }
     }
-    if (secondObjectID !== null) {
-      if ((firstObjectID === 'player') &&  (secondObjectID === 'baddy')) {
-        console.log('player hit the baddy!!!!!');
+    if (secondObject !== null) {
+      if ((firstObject.id === 'player') &&  (secondObject.id === 'baddy')) {
+        //console.log('player hit the baddy!!!!!');
+        var pRightX = firstSkin.x + firstObject.Xdif;
+        var pLeftX = firstSkin.x - firstObject.Xdif;
+        var pTopY = firstSkin.y - firstObject.Ydif;
+        var pBottom = firstSkin.y + firstObject.Ydif;
+        //console.log('P right: ' + pRightX + ' left: ' + pLeftX + ' top: ' + pTopY + ' bottom: ' + pBottom);
+
+        //console.log(firstSkin.x + ' ' + firstSkin.y);
+        //console.log(secondSkin.x + ' ' + secondSkin.y);
+        var npcRightX = secondSkin.x + secondObject.Xdif;
+        var npcLeftX = secondSkin.x - secondObject.Xdif;
+        var npcTopY = secondSkin.y - secondObject.Ydif;
+        var npcBottom = secondSkin.y + secondObject.Ydif;
+
+        var left = (pRightX - npcLeftX);
+        var right = (pLeftX - npcRightX);
+        var top = (pBottom - npcTopY);
+        var bottom = (pTopY - npcBottom);
+        var margin = 7;
+        var precision = 4;
+        //console.log('N right: ' + npcRightX + ' left: ' + npcLeftX + ' top: ' + npcTopY + ' bottom: ' + npcBottom);
+
+        //console.log('left margin: ' + left + ' right margin ' + right + ' top margin ' + top + ' bottom margin ' + bottom);
+        //bodies[0].GetUserData().skin.x;
+        if ((left < margin) && (left > -Math.abs(margin))) {
+          //console.log('hit NPC on the left -- pX: ' + pRightX + ' npcX: ' + npcLeftX + ' = ' + (pRightX - npcLeftX));
+          sideHit = 'left';
+        } else if ((right < margin) && (right > -Math.abs(margin))) {
+          //console.log('hit NPC on the right -- pX: ' + pLeftX + ' npcX: ' + npcRightX + ' = ' + (pLeftX - npcRightX));
+          sideHit = 'right';
+        } else if ((top < margin) && (top > -Math.abs(margin))) {
+          //console.log('hit NPC on the top');
+          sideHit = 'top';
+        } else if ((bottom < margin) && (bottom > -Math.abs(margin))) {
+          //console.log('hit NPC on the bottom');
+          sideHit = 'bottom';
+        } else {
+          sideHit = 'out of margin: ' + margin +
+            '\nleft margin: ' + left.toFixed(precision) + ' right margin ' + right.toFixed(precision) +
+            '\ntop margin ' + top.toFixed(precision) + ' bottom margin ' + bottom.toFixed(precision);
+        }
       }
     }
   };
@@ -65,7 +108,7 @@ var B2d = function() {
         if (!touchingFloor) {
           touchingDown = false;
         }
-        console.log(touchingDown);
+        //console.log(touchingDown);
       }
     }
   };
@@ -100,6 +143,24 @@ var B2d = function() {
     var actor = new actorObject(floor, platform, spriteId);
     actor.id = spriteId;
     floor.SetUserData(actor);
+
+    var platform1Fixture = new b2FixtureDef;
+    platform1Fixture.density = 1;
+    platform1Fixture.restitution = 0;
+    platform1Fixture.shape = new b2PolygonShape;
+    platform1Fixture.shape.SetAsBox(500 / SCALE, 10 / SCALE);
+    var platform1BodyDef = new b2BodyDef;
+    platform1BodyDef.type = b2Body.b2_staticBody;
+    platform1BodyDef.position.x = -25 / SCALE;
+    platform1BodyDef.position.y = 500 / SCALE;
+    var platform1 = world.CreateBody(platform1BodyDef);
+    platform1.CreateFixture(platform1Fixture);
+
+    // assign actor for floor
+    var actor1 = new actorObject(platform1, platform, 'platform1');
+    actor1.id = 'platform1';
+    platform1.SetUserData(actor1);
+
     // boundaries - left
     var leftFixture = new b2FixtureDef;
     leftFixture.shape = new b2PolygonShape;
@@ -132,16 +193,7 @@ var B2d = function() {
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
     //if (bodies[0] != undefined) {
     if (false) {
-      var pos = bodies[0].GetPosition();
-      var angle = bodies[0].GetAngle();
-      var vel = bodies[0].GetLinearVelocity();
-      var angularVel = bodies[0].GetAngularVelocity();
-      debugDraw.DrawString(5, m_textLine,
-                           'Position:%.3f,%.3f Angle:%.3f', pos.x, pos.y, angle * RADTODEG);
-      m_textLine += 15;
-      m_debugDraw.DrawString(5, m_textLine,
-                             'Velocity:%.3f,%.3f Angular velocity:%.3f', vel.x, vel.y, angularVel * RADTODEG);
-      m_textLine += 15;
+
     }
     world.SetDebugDraw(debugDraw);
   };
@@ -219,6 +271,8 @@ var B2d = function() {
     // assign actor
     var actor = new actorObject(sprite, skin, spriteId);
     actor.id = spriteId;
+    actor.Xdif = xScale;
+    actor.Ydif = yScale;
     sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
     bodies.push(sprite);
   };
@@ -253,11 +307,36 @@ var B2d = function() {
     bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
   };
 
+  var playerData = function() {
+    //console.log(bodies[0].GetUserData().skin.x);
+    var data = {
+      pos: {
+        x: bodies[0].GetUserData().skin.x,
+        y: bodies[0].GetUserData().skin.y
+      },
+      //angle: bodies[0].GetAngle(),
+      vel: bodies[0].GetLinearVelocity(),
+      //angularVel: bodies[0].GetAngularVelocity()
+      touchingDown: touchingDown,
+      touchingFloor: touchingFloor,
+      sideHit: sideHit
+    };
+
+    return data;
+    //debugDraw.DrawString(5, m_textLine,
+    //                       'Position:%.3f,%.3f Angle:%.3f', pos.x, pos.y, angle * RADTODEG);
+    //m_textLine += 15;
+    //m_debugDraw.DrawString(5, m_textLine,
+    //                         'Velocity:%.3f,%.3f Angular velocity:%.3f', vel.x, vel.y, angularVel * RADTODEG);
+    //m_textLine += 15;
+  };
+
   return {
     setup: setup,
     addDebug: addDebug,
     update: update,
     spriteMake: spriteMake,
-    movePlayer: movePlayer
+    movePlayer: movePlayer,
+    playerData: playerData
   };
 };
