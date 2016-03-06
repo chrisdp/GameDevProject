@@ -297,7 +297,7 @@ var B2d = function() {
       break;
     case 'up':
       if (touchingDown) {
-        forceY = -200;
+        forceY = -250;
       }
       break;
     case 'down':

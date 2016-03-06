@@ -30,6 +30,7 @@ var debugContext = null;
   var baddy = null;
   var platform = null;
   var floor = null;
+  var platform1 = null;
   var star = null;
   var setup = null;
   var b2d = null;
@@ -228,6 +229,13 @@ var debugContext = null;
     floor.gotoAndPlay('platform');
     stage.addChildAt(floor, 1);
 
+    platform1 = assetManager.getSprite(sSheet);
+    platform1.x = 0;
+    platform1.y = 488;
+    platform1.scaleX = 1.191;
+    platform1.scaleY = 0.8;
+    platform1.gotoAndPlay('platform');
+    stage.addChild(platform1);
     //b2d.addDebug();
 
     txt = new createjs.Text('', '12px Arial', '#111');
