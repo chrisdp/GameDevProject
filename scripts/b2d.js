@@ -37,16 +37,14 @@ var B2d = function() {
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObject = contact.GetFixtureB().GetBody().GetUserData();
       secondSkin = contact.GetFixtureB().GetBody().GetUserData().skin;
-      //console.log(contact.GetFixtureA().GetBody().GetUserData());
+      console.log(contact.GetFixtureA().GetBody().GetUserData());
       //console.log(contact.GetFixtureB().GetBody().GetUserData());
-      //console.log(contact.GetFixtureA().GetBody());
-      //console.log(contact.GetFixtureB().GetBody().GetPosition());
+
       if (secondObject.id !== null) {
         if (secondObject.id === 'floor') {
           touchingFloor = true;
         }
         touchingDown = true;
-        //console.log(touchingDown);
       }
     }
     if (secondObject !== null) {
@@ -158,7 +156,7 @@ var B2d = function() {
 
     // assign actor for floor
     var actor1 = new actorObject(platform1, platform, 'platform1');
-    actor1.id = 'platform1';
+    actor1.id = spriteId;
     platform1.SetUserData(actor1);
 
     // boundaries - left

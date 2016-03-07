@@ -14,11 +14,25 @@ var canvas = null;
 var debugCanvas = null;
 var context = null;
 var debugContext = null;
+var gamepadConnected = false;
 
 (function() {
   'use strict';
 
   window.addEventListener('load', onInit);
+
+  window.addEventListener('gamepadconnected', function(e) {
+    console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
+                e.gamepad.index, e.gamepad.id,
+                e.gamepad.buttons.length, e.gamepad.axes.length);
+    gamepadConnected = true;
+  });
+
+  window.addEventListener('gamepaddisconnected', function(e) {
+    console.log('Gamepad disconnected from index %d: %s',
+                e.gamepad.index, e.gamepad.id);
+    gamepadConnected = false;
+  });
 
   // frame rate of game
   var frameRate = 24;
@@ -181,6 +195,11 @@ var debugContext = null;
     console.log('>> setup');
     // kill event listener
     stage.removeEventListener('onAllAssetsLoaded', onReady);
+
+    if (navigator.getGamepads()[0] !== undefined) {
+      gamepadConnected = true;
+    }
+    console.log(navigator.getGamepads());
     var sSheet = 'gameAssets';
     // setup sprite to act as a floor skin
     platform = assetManager.getSprite(sSheet);
@@ -238,20 +257,29 @@ var debugContext = null;
     stage.addChild(platform1);
     //b2d.addDebug();
 
-    txt = new createjs.Text('', '12px Arial', '#111');
-    txt.lineWidth = 550;
-    txt.lineHeight = 15;
-    txt.textBaseline = 'top';
-    txt.textAlign = 'left';
-    txt.y = 15;
-    txt.x = 15;
+    txtLeft = new createjs.Text('', '12px Arial', '#111');
+    txtLeft.lineWidth = 550;
+    txtLeft.lineHeight = 15;
+    txtLeft.textBaseline = 'top';
+    txtLeft.textAlign = 'left';
+    txtLeft.y = 15;
+    txtLeft.x = 15;
+
+    txtRight = new createjs.Text('', '12px Arial', '#111');
+    txtRight.lineWidth = 550;
+    txtRight.lineHeight = 15;
+    txtRight.textBaseline = 'top';
+    txtRight.textAlign = 'right';
+    txtRight.y = 15;
+    txtRight.x = 885;
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addEventListener('tick', onTick);
   }
 
-  var txt = null;
+  var txtLeft = null;
+  var txtRight = null;
   function onTick(e) {
     // TESTING FPS
     //document.getElementById('fps').innerHTML = createjs.Ticker.getMeasuredFPS();
@@ -260,22 +288,29 @@ var debugContext = null;
     // ...
     //console.log(debugging);
     if (debugging) {
-      stage.addChild(txt);
-      txt.visible = true;
+      stage.addChild(txtLeft);
+      txtLeft.visible = true;
       var data = b2d.playerData();
-      txt.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
-      txt.text += '\nX: ' + data.pos.x;
-      txt.text += '\nY: ' + data.pos.y;
+      txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
+      txtLeft.text += '\nX: ' + data.pos.x;
+      txtLeft.text += '\nY: ' + data.pos.y;
       //txt.text += '\nangle: ' + data.angle;
-      txt.text += '\nvelocity X: ' + data.vel.x;
-      txt.text += '\nvelocity Y: ' + data.vel.y;
-      txt.text += '\non floor: ' + data.touchingFloor;
-      txt.text += '\ncan jump: ' + data.touchingDown;
-      txt.text += '\nside hit: ' + data.sideHit;
-      //txt.text += '\nangular velocity: ' + data.angularVel;
+      txtLeft.text += '\nvelocity X: ' + data.vel.x;
+      txtLeft.text += '\nvelocity Y: ' + data.vel.y;
+      txtLeft.text += '\non floor: ' + data.touchingFloor;
+      txtLeft.text += '\ncan jump: ' + data.touchingDown;
+      txtLeft.text += '\nside hit: ' + data.sideHit;
+
+      // Right Text Debugger
+      stage.addChild(txtRight);
+      txtRight.visible = true;
+      txtRight.text = ((gamepadConnected) ? 'connected' : 'disconnected') + ' :gamepad';
     } else {
-      stage.removeChild(txt);
-      txt.visible = false;
+      stage.removeChild(txtLeft);
+      txtLeft.visible = false;
+
+      stage.removeChild(txtRight);
+      txtRight.visible = false;
     }
     // update the stage!
     move();
