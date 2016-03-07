@@ -37,7 +37,7 @@ var B2d = function() {
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObject = contact.GetFixtureB().GetBody().GetUserData();
       secondSkin = contact.GetFixtureB().GetBody().GetUserData().skin;
-      console.log(contact.GetFixtureA().GetBody().GetUserData());
+      //console.log(contact.GetFixtureA().GetBody().GetUserData());
       //console.log(contact.GetFixtureB().GetBody().GetUserData());
 
       if (secondObject.id !== null) {
@@ -47,6 +47,7 @@ var B2d = function() {
         touchingDown = true;
       }
     }
+
     if (secondObject !== null) {
       if ((firstObject.id === 'player') &&  (secondObject.id === 'baddy')) {
         //console.log('player hit the baddy!!!!!');
@@ -275,21 +276,23 @@ var B2d = function() {
     bodies.push(sprite);
   };
 
-  var movePlayer = function(where) {
+  var movePlayer = function(where, speed) {
     //var player = bodies[0].GetUserData();
     var vel = bodies[0].GetLinearVelocity();
     var forceX = 0;
     var forceY = 0;
+    var maxVel = (speed === undefined) ? 4 : speed;
+    console.log(maxVel);
     //console.log(vel);
     switch (where) {
     case 'left':
       //console.log(vel.x);
-      if (vel.x > -4) {
+      if (vel.x > -maxVel) {
         forceX = -15;
       }
       break;
     case 'right':
-      if (vel.x < 4) {
+      if (vel.x < maxVel) {
         forceX = 15;
       }
       break;

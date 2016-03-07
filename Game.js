@@ -15,7 +15,8 @@ var debugCanvas = null;
 var context = null;
 var debugContext = null;
 var gamepadConnected = false;
-
+var controllers = {};
+var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 'LAB', 'RAB', 'D U', 'D D', 'D L', 'D R', 'Menu'];
 (function() {
   'use strict';
 
@@ -26,13 +27,101 @@ var gamepadConnected = false;
                 e.gamepad.index, e.gamepad.id,
                 e.gamepad.buttons.length, e.gamepad.axes.length);
     gamepadConnected = true;
+    addgamepad(e.gamepad);
   });
 
   window.addEventListener('gamepaddisconnected', function(e) {
     console.log('Gamepad disconnected from index %d: %s',
                 e.gamepad.index, e.gamepad.id);
     gamepadConnected = false;
+    removegamepad(e.gamepad);
   });
+
+  function addgamepad(gamepad) {
+    controllers[gamepad.index] = gamepad; var d = document.createElement('div');
+    d.setAttribute('id', 'controller' + gamepad.index);
+    var t = document.createElement('h4');
+    t.appendChild(document.createTextNode('gamepad: ' + gamepad.id));
+    d.appendChild(t);
+    var b = document.createElement('div');
+    b.className = 'controller-buttons';
+    for (var i = 0; i < gamepad.buttons.length; i++) {
+      var e = document.createElement('span');
+      e.className = 'controller-button';
+      //e.id = "b" + i;
+      e.innerHTML = buttonNames[i];
+      b.appendChild(e);
+    }
+    d.appendChild(b);
+    var a = document.createElement('div');
+    a.className = 'axes';
+    for (i = 0; i < gamepad.axes.length; i++) {
+      e = document.createElement('progress');
+      e.className = 'axis';
+      //e.id = "a" + i;
+      e.setAttribute('max', '2');
+      e.setAttribute('value', '1');
+      e.innerHTML = i;
+      a.appendChild(e);
+    }
+    d.appendChild(a);
+    document.getElementById('start').style.display = 'none';
+    document.getElementById('controllerDebug').appendChild(d);
+    console.log(controllers);
+  }
+
+  function updateStatus() {
+    scangamepads();
+    //console.log(controllers);
+    var j;
+    for (j in controllers) {
+      var controller = controllers[j];
+      var d = document.getElementById('controller' + j);
+      var buttons = d.getElementsByClassName('controller-button');
+      for (var i = 0; i < controller.buttons.length; i++) {
+        var b = buttons[i];
+        var val = controller.buttons[i];
+        var pressed = val == 1.0;
+        if (typeof(val) == 'object') {
+          pressed = val.pressed;
+          val = val.value;
+        }
+        var pct = Math.round(val * 100) + '%';
+        b.style.backgroundSize = pct + ' ' + pct;
+        if (pressed) {
+          b.className = 'controller-button pressed';
+        } else {
+          b.className = 'controller-button';
+        }
+      }
+
+      var axes = d.getElementsByClassName('axis');
+      for (var i = 0; i < controller.axes.length; i++) {
+        var a = axes[i];
+        a.innerHTML = i + ': ' + controller.axes[i].toFixed(4);
+        a.setAttribute('value', controller.axes[i] + 1);
+      }
+    }
+  }
+
+  function removegamepad(gamepad) {
+    var d = document.getElementById('controller' + gamepad.index);
+    document.getElementById('controllerDebug').removeChild(d);
+    delete controllers[gamepad.index];
+  }
+
+  function scangamepads() {
+    var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+    for (var i = 0; i < gamepads.length; i++) {
+      if (gamepads[i]) {
+        if (!(gamepads[i].index in controllers)) {
+          addgamepad(gamepads[i]);
+        } else {
+          controllers[gamepads[i].index] = gamepads[i];
+        }
+      }
+    }
+  }
 
   // frame rate of game
   var frameRate = 24;
@@ -169,25 +258,54 @@ var gamepadConnected = false;
   }
 
   function move() {
-    if ((!leftArrow) && (!rightArrow)) {
-      dude.gotoAndPlay('dudeIdile');
-    }
 
-    if (leftArrow) {
-      b2d.movePlayer('left');
-    }
+    if (gamepadConnected) {
+      var xAxe = controllers[0].axes[0].toFixed(4);
+      var yAxe = controllers[0].axes[1].toFixed(4);
+      //console.log('X; ' + (xAxe * 4) + ' Y ' + (yAxe * 4));
+      if ((xAxe < 0.05) && (xAxe > -0.05)) {
+        dude.gotoAndPlay('dudeIdile');
+      }
 
-    if (rightArrow) {
-      b2d.movePlayer('right');
-    }
+      if (xAxe > 0.55) {
+        dude.gotoAndPlay('dudeMoveRight');
+        b2d.movePlayer('right', (xAxe * 4));
+      }
 
-    if (upArrow) {
-      b2d.movePlayer('up');
-      upArrow = false;
-    }
+      if (xAxe < -0.55) {
+        dude.gotoAndPlay('dudeMoveLeft');
+        b2d.movePlayer('left', (xAxe * 4));
+      }
 
-    if (downArrow) {
-      b2d.movePlayer('down');
+      if (yAxe < 0.80) {
+        b2d.movePlayer('down');
+      }
+
+      if (controllers[0].buttons[0] === 0) {
+        b2d.movePlayer('up');
+      }
+    } else {
+
+      if ((!leftArrow) && (!rightArrow)) {
+        dude.gotoAndPlay('dudeIdile');
+      }
+
+      if (leftArrow) {
+        b2d.movePlayer('left');
+      }
+
+      if (rightArrow) {
+        b2d.movePlayer('right');
+      }
+
+      if (upArrow) {
+        b2d.movePlayer('up');
+        upArrow = false;
+      }
+
+      if (downArrow) {
+        b2d.movePlayer('down');
+      }
     }
   }
 
@@ -198,6 +316,7 @@ var gamepadConnected = false;
 
     if (navigator.getGamepads()[0] !== undefined) {
       gamepadConnected = true;
+      addgamepad(navigator.getGamepads()[0]);
     }
     console.log(navigator.getGamepads());
     var sSheet = 'gameAssets';
@@ -283,7 +402,7 @@ var gamepadConnected = false;
   function onTick(e) {
     // TESTING FPS
     //document.getElementById('fps').innerHTML = createjs.Ticker.getMeasuredFPS();
-
+    updateStatus();
     // put your other stuff here!
     // ...
     //console.log(debugging);
@@ -305,12 +424,22 @@ var gamepadConnected = false;
       stage.addChild(txtRight);
       txtRight.visible = true;
       txtRight.text = ((gamepadConnected) ? 'connected' : 'disconnected') + ' :gamepad';
+
+      // Controller Debugger
+      if ($('#controllerDebug:visible').length === 0) {
+        $('#controllerDebug').show();
+      }
+
     } else {
       stage.removeChild(txtLeft);
       txtLeft.visible = false;
 
       stage.removeChild(txtRight);
       txtRight.visible = false;
+
+      if ($('#controllerDebug:visible').length === 1) {
+        $('#controllerDebug').hide();
+      }
     }
     // update the stage!
     move();
