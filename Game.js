@@ -262,7 +262,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     if (gamepadConnected) {
       var xAxe = controllers[0].axes[0].toFixed(4);
       var yAxe = controllers[0].axes[1].toFixed(4);
-      //console.log('X; ' + (xAxe * 4) + ' Y ' + (yAxe * 4));
       if ((xAxe < 0.05) && (xAxe > -0.05)) {
         dude.gotoAndPlay('dudeIdile');
       }
@@ -277,11 +276,11 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
         b2d.movePlayer('left', (xAxe * 4));
       }
 
-      if (yAxe < 0.80) {
+      if (yAxe > 0.80) {
         b2d.movePlayer('down');
       }
 
-      if (controllers[0].buttons[0] === 0) {
+      if (controllers[0].buttons[0].pressed) {
         b2d.movePlayer('up');
       }
     } else {

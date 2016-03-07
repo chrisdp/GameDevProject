@@ -281,19 +281,27 @@ var B2d = function() {
     var vel = bodies[0].GetLinearVelocity();
     var forceX = 0;
     var forceY = 0;
-    var maxVel = (speed === undefined) ? 4 : speed;
-    console.log(maxVel);
+    var maxVel = 4;
+    var maxNegVel = -4;
+
+    if (speed !== undefined) {
+      maxVel = speed;
+      maxNegVel = speed;
+    }
+
+    //console.log(maxVel);
     //console.log(vel);
     switch (where) {
     case 'left':
       //console.log(vel.x);
-      if (vel.x > -maxVel) {
-        forceX = -15;
+      if (vel.x > maxNegVel) {
+        //console.log('move left passed');
+        forceX = -20;
       }
       break;
     case 'right':
       if (vel.x < maxVel) {
-        forceX = 15;
+        forceX = 20;
       }
       break;
     case 'up':
