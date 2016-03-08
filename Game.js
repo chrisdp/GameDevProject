@@ -370,6 +370,15 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
           id: platId,
           restitution: 0,
           animation: platAn
+        },
+        {
+          spawnX: 850,
+          spawnY: 200,
+          width: 100,
+          height: 10,
+          id: platId,
+          restitution: 0,
+          animation: platAn
         }
       ]
     }
