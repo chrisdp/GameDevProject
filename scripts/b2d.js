@@ -120,46 +120,33 @@ var B2d = function() {
     //console.log(contact);
   };
 
+  var platformMake = function(sprite, platform) {
+
+    var newFixture = new b2FixtureDef;
+    newFixture.density = 1;
+    newFixture.restitution = 0;
+    newFixture.shape = new b2PolygonShape;
+    newFixture.shape.SetAsBox(platform.width / SCALE, platform.height / SCALE);
+    var newBodyDef = new b2BodyDef;
+    newBodyDef.type = b2Body.b2_staticBody;
+    newBodyDef.position.x = sprite.x / SCALE;
+    newBodyDef.position.y = sprite.y / SCALE;
+    var floor = world.CreateBody(newBodyDef);
+    floor.CreateFixture(newFixture);
+
+    // assign actor for floor
+    var actor = new actorObject(floor, sprite, platform.id);
+    actor.id = platform.id;
+    actor.Xdif = platform.width;
+    actor.Ydif = platform.height;
+    floor.SetUserData(actor);
+  };
+
   // box2d world setup and boundaries
   var setup = function(platform, spriteId) {
     world = new b2World(new b2Vec2(0,10), true);
     world.SetContactListener(listener);
     addDebug();
-    // boundaries - floor
-    var floorFixture = new b2FixtureDef;
-    floorFixture.density = 1;
-    floorFixture.restitution = 0;
-    floorFixture.shape = new b2PolygonShape;
-    floorFixture.shape.SetAsBox(1000 / SCALE, 10 / SCALE);
-    var floorBodyDef = new b2BodyDef;
-    floorBodyDef.type = b2Body.b2_staticBody;
-    floorBodyDef.position.x = -25 / SCALE;
-    floorBodyDef.position.y = 582 / SCALE;
-    var floor = world.CreateBody(floorBodyDef);
-    floor.CreateFixture(floorFixture);
-
-    // assign actor for floor
-    var actor = new actorObject(floor, platform, spriteId);
-    actor.id = spriteId;
-    floor.SetUserData(actor);
-
-    var platform1Fixture = new b2FixtureDef;
-    platform1Fixture.density = 1;
-    platform1Fixture.restitution = 0;
-    platform1Fixture.shape = new b2PolygonShape;
-    platform1Fixture.shape.SetAsBox(500 / SCALE, 10 / SCALE);
-    var platform1BodyDef = new b2BodyDef;
-    platform1BodyDef.type = b2Body.b2_staticBody;
-    platform1BodyDef.position.x = -25 / SCALE;
-    platform1BodyDef.position.y = 500 / SCALE;
-    var platform1 = world.CreateBody(platform1BodyDef);
-    platform1.CreateFixture(platform1Fixture);
-
-    // assign actor for floor
-    var actor1 = new actorObject(platform1, platform, 'platform1');
-    actor1.id = spriteId;
-    platform1.SetUserData(actor1);
-
     // boundaries - left
     var leftFixture = new b2FixtureDef;
     leftFixture.shape = new b2PolygonShape;
@@ -305,7 +292,7 @@ var B2d = function() {
       }
       break;
     case 'up':
-      if (touchingDown) {
+      if ((touchingDown) && (vel.y > -3)) {
         forceY = -250;
       }
       break;
@@ -317,15 +304,13 @@ var B2d = function() {
   };
 
   var playerData = function() {
-    //console.log(bodies[0].GetUserData().skin.x);
+
     var data = {
       pos: {
         x: bodies[0].GetUserData().skin.x,
         y: bodies[0].GetUserData().skin.y
       },
-      //angle: bodies[0].GetAngle(),
       vel: bodies[0].GetLinearVelocity(),
-      //angularVel: bodies[0].GetAngularVelocity()
       touchingDown: touchingDown,
       touchingFloor: touchingFloor,
       sideHit: sideHit
@@ -346,6 +331,7 @@ var B2d = function() {
     update: update,
     spriteMake: spriteMake,
     movePlayer: movePlayer,
-    playerData: playerData
+    playerData: playerData,
+    platformMake: platformMake
   };
 };

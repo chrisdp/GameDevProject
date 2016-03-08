@@ -25,28 +25,28 @@
     [1435, 2, 32, 32, 0, 16, 17],
     [1611, 2, 32, 28, 0, 16, 11],
     [2, 2, 801, 601, 0, 0, 0],
-    [1030, 2, 401, 33, 0, 0, 0],
+    [1030, 2, 401, 33, 0, 200, 17],
     [1582, 2, 25, 30, 0, 13, 17]
 ],
 "animations":{
-    "moveRight": {"speed": 1, "frames": [2, 2, 2, 2, 2, 3, 3, 3, 3, 3]},
-    "star": {"speed": 1, "frames": [18]},
     "dudeMoveLeft": {"speed": 1, "frames": [4, 4, 4, 5, 5, 5, 6, 6, 6, 5, 5, 5]},
-    "dudeIdile": {"speed": 1, "frames": [7]},
-    "boom": {
-        "speed": 1,
-        "frames": [11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17]
-    },
     "heart": {"speed": 1, "frames": [19]},
-    "dimond": {"speed": 1, "frames": [21]},
     "health": {"speed": 1, "frames": [20]},
-    "bomb": {"speed": 1, "frames": [24]},
-    "platform": {"speed": 1, "frames": [23]},
-    "sky": {"speed": 1, "frames": [22]},
     "dudeMoveRight": {
         "speed": 1,
         "frames": [8, 8, 8, 9, 9, 9, 8, 8, 8, 10, 10, 10]
     },
-    "moveLeft": {"speed": 1, "frames": [0, 0, 0, 0, 1, 1, 1, 1, 1]}
+    "bomb": {"speed": 1, "frames": [24]},
+    "dudeIdile": {"speed": 1, "frames": [7]},
+    "moveLeft": {"speed": 1, "frames": [0, 0, 0, 0, 1, 1, 1, 1, 1]},
+    "boom": {
+        "speed": 1,
+        "frames": [11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17]
+    },
+    "platform": {"speed": 1, "frames": [23]},
+    "star": {"speed": 1, "frames": [18]},
+    "moveRight": {"speed": 1, "frames": [2, 2, 2, 2, 2, 3, 3, 3, 3, 3]},
+    "sky": {"speed": 1, "frames": [22]},
+    "dimond": {"speed": 1, "frames": [21]}
 }
 }

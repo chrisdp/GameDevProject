@@ -14,9 +14,12 @@ var canvas = null;
 var debugCanvas = null;
 var context = null;
 var debugContext = null;
+
+// controller vars
 var gamepadConnected = false;
 var controllers = {};
 var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 'LAB', 'RAB', 'D U', 'D D', 'D L', 'D R', 'Menu'];
+
 (function() {
   'use strict';
 
@@ -48,7 +51,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     for (var i = 0; i < gamepad.buttons.length; i++) {
       var e = document.createElement('span');
       e.className = 'controller-button';
-      //e.id = "b" + i;
       e.innerHTML = buttonNames[i];
       b.appendChild(e);
     }
@@ -58,7 +60,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     for (i = 0; i < gamepad.axes.length; i++) {
       e = document.createElement('progress');
       e.className = 'axis';
-      //e.id = "a" + i;
       e.setAttribute('max', '2');
       e.setAttribute('value', '1');
       e.innerHTML = i;
@@ -72,7 +73,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
   function updateStatus() {
     scangamepads();
-    //console.log(controllers);
     var j;
     for (j in controllers) {
       var controller = controllers[j];
@@ -174,7 +174,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
 
     setCookie('debug', debugging, 30);
-    //debugging = (getCookie('debug')) ? true : false;
     if (debugging === true) {
       console.log('debugger enabled' + debugging);
       $('#debugCanvas').toggle();
@@ -215,14 +214,12 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   function keyDownHandler(e) {
     switch (e.keyCode) {
     case KEYCODE_LEFT:
-      console.log('left');
       if (!leftArrow) {
         dude.gotoAndPlay('dudeMoveLeft');
       }
       leftArrow = true;
       break;
     case KEYCODE_RIGHT:
-      console.log('right');
       if (!rightArrow) {
         dude.gotoAndPlay('dudeMoveRight');
       }
@@ -230,11 +227,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
       break;
     case KEYCODE_UP:
-      console.log('up');
       upArrow = true;
       break;
     case KEYCODE_DOWN:
-      console.log('down');
       downArrow = true;
       break;
     }
@@ -263,16 +258,22 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       var xAxe = controllers[0].axes[0].toFixed(4);
       var yAxe = controllers[0].axes[1].toFixed(4);
       if ((xAxe < 0.05) && (xAxe > -0.05)) {
-        dude.gotoAndPlay('dudeIdile');
+        if (dude.currentAnimation !== 'dudeIdile') {
+          dude.gotoAndPlay('dudeIdile');
+        }
       }
 
-      if (xAxe > 0.55) {
-        dude.gotoAndPlay('dudeMoveRight');
+      if (xAxe > 0.25) {
+        if (dude.currentAnimation !== 'dudeMoveRight') {
+          dude.gotoAndPlay('dudeMoveRight');
+        }
         b2d.movePlayer('right', (xAxe * 4));
       }
 
-      if (xAxe < -0.55) {
-        dude.gotoAndPlay('dudeMoveLeft');
+      if (xAxe < -0.25) {
+        if (dude.currentAnimation !== 'dudeMoveLeft') {
+          dude.gotoAndPlay('dudeMoveLeft');
+        }
         b2d.movePlayer('left', (xAxe * 4));
       }
 
@@ -308,6 +309,72 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
   }
 
+  var platId = 'floor';
+  var platAn = 'platform';
+  var worldData = {
+    levelOne: {
+      players: [
+        {
+          spawnX: 200,
+          spawnY: 200,
+          animation: 'dudeIdile',
+          id: 'player',
+          width: 14,
+          height: 23
+        }
+      ],
+      baddys: [
+        {
+          spawnX: 300,
+          spawnY: 300,
+          patOne: 350,
+          patTwo: 400,
+          id: 'baddy',
+          width: 14,
+          height: 15
+        }
+      ],
+      platforms: [
+        {
+          spawnX: 400,
+          spawnY: 300,
+          width: 200,
+          height: 10,
+          id: platId,
+          restitution: 0,
+          animation: platAn
+        },
+        {
+          spawnX: 200,
+          spawnY: 488,
+          width: 500,
+          height: 10,
+          id: platId,
+          restitution: 0,
+          animation: platAn
+        },
+        {
+          spawnX: 450,
+          spawnY: 590,
+          width: 1000,
+          height: 10,
+          id: platId,
+          restitution: 0,
+          animation: platAn
+        },
+        {
+          spawnX: 100,
+          spawnY: 400,
+          width: 150,
+          height: 10,
+          id: platId,
+          restitution: 0,
+          animation: platAn
+        }
+      ]
+    }
+  };
+
   function onReady(e) {
     console.log('>> setup');
     // kill event listener
@@ -320,9 +387,23 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     console.log(navigator.getGamepads());
     var sSheet = 'gameAssets';
     // setup sprite to act as a floor skin
-    platform = assetManager.getSprite(sSheet);
 
-    b2d.setup(platform, 'floor');
+    b2d.setup();
+
+    var temp;
+    var newFloor = [];
+    for (var i = 0; i < worldData.levelOne.platforms.length; i++) {
+      temp = worldData.levelOne.platforms[i];
+      newFloor.push(assetManager.getSprite('gameAssets'));
+      newFloor[i].x = temp.spawnX;
+      newFloor[i].y = temp.spawnY;
+      newFloor[i].scaleX = temp.width / 200;
+      newFloor[i].scaleY = 0.8;
+      newFloor[i].gotoAndPlay(temp.animation);
+      stage.addChild(newFloor[i]);
+      b2d.platformMake(newFloor[i], temp);
+      //console.log(newFloor[i]);
+    }
 
     backdrop = assetManager.getSprite(sSheet);
     backdrop.x = 0;
@@ -330,7 +411,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     backdrop.scaleY = 1;
     backdrop.scaleX = 1.2;
     backdrop.gotoAndPlay('sky');
-    stage.addChild(backdrop);
+    stage.addChildAt(backdrop, 0);
 
     // add snake to the stage
     dude = assetManager.getSprite(sSheet);
@@ -343,37 +424,12 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     stage.addChild(dude);
     b2d.spriteMake(dude, 14, 23, 'player');
 
-    /*
-    var shape = new createjs.Shape();
-    var SIZE = 2;
-    var centerX = 200;
-    var centerY = 548.775;
-    shape.graphics.beginFill('red').drawRect(centerX - SIZE / 2, centerY - SIZE / 2, SIZE, SIZE);
-    stage.addChild(shape);
-    */
-
     baddy = assetManager.getSprite('gameAssets');
     baddy.x = 300;
     baddy.y = 300;
     baddy.gotoAndPlay('moveLeft');
     stage.addChild(baddy);
     b2d.spriteMake(baddy, 14, 15, 'baddy');
-
-    floor = assetManager.getSprite('gameAssets');
-    floor.x = 0;
-    floor.y = 570;
-    floor.scaleX = 2.3;
-    floor.gotoAndPlay('platform');
-    stage.addChildAt(floor, 1);
-
-    platform1 = assetManager.getSprite(sSheet);
-    platform1.x = 0;
-    platform1.y = 488;
-    platform1.scaleX = 1.191;
-    platform1.scaleY = 0.8;
-    platform1.gotoAndPlay('platform');
-    stage.addChild(platform1);
-    //b2d.addDebug();
 
     txtLeft = new createjs.Text('', '12px Arial', '#111');
     txtLeft.lineWidth = 550;
@@ -412,7 +468,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
       txtLeft.text += '\nX: ' + data.pos.x;
       txtLeft.text += '\nY: ' + data.pos.y;
-      //txt.text += '\nangle: ' + data.angle;
       txtLeft.text += '\nvelocity X: ' + data.vel.x;
       txtLeft.text += '\nvelocity Y: ' + data.vel.y;
       txtLeft.text += '\non floor: ' + data.touchingFloor;
