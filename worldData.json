@@ -1,0 +1,72 @@
+worldData = {
+    levelOne: {
+      players: [
+        {
+          spawnX: 200,
+          spawnY: 200,
+          animation: 'dudeIdile',
+          id: 'player',
+          width: 14,
+          height: 23
+        }
+      ],
+      baddys: [
+        {
+          spawnX: 300,
+          spawnY: 300,
+          patOne: 350,
+          patTwo: 400,
+          id: 'baddy',
+          width: 14,
+          height: 15
+        }
+      ],
+      platforms: [
+        {
+          spawnX: 400,
+          spawnY: 300,
+          width: 200,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        {
+          spawnX: 200,
+          spawnY: 488,
+          width: 500,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        {
+          spawnX: 450,
+          spawnY: 590,
+          width: 1000,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        {
+          spawnX: 100,
+          spawnY: 400,
+          width: 150,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        {
+          spawnX: 850,
+          spawnY: 200,
+          width: 100,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        }
+      ]
+    }
+  };
