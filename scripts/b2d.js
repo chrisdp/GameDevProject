@@ -199,6 +199,35 @@ var B2d = function() {
       }
       bodiesToRemove = [];
 
+      for (i = 0; i < actors.length; i++) {
+        var force = 0;
+        var vel = actors[i].body.GetLinearVelocity();
+        if (actors[i].id === 'baddy') {
+          if (actors[i].skin.direction) {
+            if (actors[i].skin.patOne < actors[i].skin.x) {
+              //console.log('pat one is less then x');
+              if (vel.x > -1) {
+                force = -10;
+              }
+            } else {
+              actors[i].skin.direction = false;
+            }
+          } else {
+            if (actors[i].skin.patTwo > actors[i].skin.x) {
+              //console.log('pat two : ' + actors[i].skin.patTwo + ' is grater then x: ' + actors[i].skin.x);
+              //console.log(vel);
+              if (vel.x < 1) {
+                //console.log('changed force');
+                force = 10;
+              }
+            } else {
+              actors[i].skin.direction = true;
+            }
+          }
+          actors[i].body.ApplyForce(new b2Vec2(force, 0), actors[i].body.GetWorldCenter());
+        }
+      }
+
       // update active actors
       for (i = 0, l = actors.length; i < l; i++) {
         actors[i].update();

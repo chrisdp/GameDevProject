@@ -130,7 +130,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   var assetManager = null;
   var backdrop = null;
   var dude = null;
-  var baddy = null;
+  var baddy = [];
   var platform = null;
   var floor = null;
   var platform1 = null;
@@ -357,14 +357,17 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     b2d.spriteMake(dude, playerData.width, playerData.height, playerData.id);
 
     var baddyData = worldData.levelOne.baddys;
-    var baddys = [];
+
     for (i = 0; i < baddyData.length; i++) {
-      baddys.push(assetManager.getSprite('gameAssets'));
-      baddys[i].x = baddyData[i].spawnX;
-      baddys[i].y = baddyData[i].spawnY;
-      baddys[i].gotoAndPlay(baddyData[i].animation);
-      stage.addChild(baddys[i]);
-      b2d.spriteMake(baddys[i], baddyData[i].width, baddyData[i].height, baddyData[i].id);
+      baddy.push(assetManager.getSprite('gameAssets'));
+      baddy[i].x = baddyData[i].spawnX;
+      baddy[i].y = baddyData[i].spawnY;
+      baddy[i].patOne = baddyData[i].patOne;
+      baddy[i].patTwo = baddyData[i].patTwo;
+      baddy[i].direction = true;
+      baddy[i].gotoAndPlay(baddyData[i].animation);
+      stage.addChild(baddy[i]);
+      b2d.spriteMake(baddy[i], baddyData[i].width, baddyData[i].height, baddyData[i].id);
     }
 
     txtLeft = new createjs.Text('', '12px Arial', '#111');
@@ -386,6 +389,14 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addEventListener('tick', onTick);
+  }
+
+  function updateNPC() {
+    for (var NPC in baddy) {
+      if (NPC.direction) {
+
+      }
+    }
   }
 
   var txtLeft = null;
@@ -433,6 +444,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
     // update the stage!
     move();
+    updateNPC();
     b2d.update();
     stage.update();
   }
