@@ -347,23 +347,25 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     backdrop.gotoAndPlay('sky');
     stage.addChildAt(backdrop, 0);
 
-    // add snake to the stage
+    // add player to the stage
+    var playerData = worldData.levelOne.players[0];
     dude = assetManager.getSprite(sSheet);
-    dude.x = 200;
-    dude.y = 200;
-    //console.log(dude);
-
-    // h = 23
-    dude.gotoAndPlay('dudeIdile');
+    dude.x = playerData.spawnX;
+    dude.y = playerData.spawnY;
+    dude.gotoAndPlay(playerData.animation);
     stage.addChild(dude);
-    b2d.spriteMake(dude, 14, 23, 'player');
+    b2d.spriteMake(dude, playerData.width, playerData.height, playerData.id);
 
-    baddy = assetManager.getSprite('gameAssets');
-    baddy.x = 300;
-    baddy.y = 300;
-    baddy.gotoAndPlay('moveLeft');
-    stage.addChild(baddy);
-    b2d.spriteMake(baddy, 14, 15, 'baddy');
+    var baddyData = worldData.levelOne.baddys;
+    var baddys = [];
+    for (i = 0; i < baddyData.length; i++) {
+      baddys.push(assetManager.getSprite('gameAssets'));
+      baddys[i].x = baddyData[i].spawnX;
+      baddys[i].y = baddyData[i].spawnY;
+      baddys[i].gotoAndPlay(baddyData[i].animation);
+      stage.addChild(baddys[i]);
+      b2d.spriteMake(baddys[i], baddyData[i].width, baddyData[i].height, baddyData[i].id);
+    }
 
     txtLeft = new createjs.Text('', '12px Arial', '#111');
     txtLeft.lineWidth = 550;

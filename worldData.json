@@ -2,7 +2,7 @@ worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 200,
+          spawnX: 220,
           spawnY: 200,
           animation: 'dudeIdile',
           id: 'player',
@@ -17,9 +17,20 @@ worldData = {
           patOne: 350,
           patTwo: 400,
           id: 'baddy',
+          animation: 'moveLeft',
           width: 14,
           height: 15
-        }
+        },
+        {
+          spawnX: 500,
+          spawnY: 500,
+          patOne: 350,
+          patTwo: 400,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
+        },
       ],
       platforms: [
         {
