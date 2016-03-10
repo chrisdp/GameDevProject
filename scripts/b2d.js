@@ -248,7 +248,6 @@ var B2d = function() {
       }
 
       if (offset > 0) {
-        console.log('i want to move!' + offset);
         debugContext.save();
         debugContext.clearRect(0,0, debugContext.canvas.width, debugContext.canvas.height);
         debugContext.translate(-offset, 0);
