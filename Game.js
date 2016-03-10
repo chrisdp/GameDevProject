@@ -399,11 +399,25 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
   }
 
+  var location = null;
+  var offset = null;
+  function updateCamera() {
+    location = dude.x;
+    offset = (location + debugContext.canvas.width / 2) - 900;
+    if (offset > 0) {
+      stage.setTransform(-offset);
+      txtLeft.x = location - 435;
+      txtRight.x = location + 435;
+    } else {
+      stage.setTransform(0);
+    }
+  }
+
   var txtLeft = null;
   var txtRight = null;
   function onTick(e) {
     // TESTING FPS
-    //document.getElementById('fps').innerHTML = createjs.Ticker.getMeasuredFPS();
+
     updateStatus();
     // put your other stuff here!
     // ...
@@ -442,10 +456,11 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
         $('#controllerDebug').hide();
       }
     }
+
     // update the stage!
     move();
-    updateNPC();
     b2d.update();
+    updateCamera();
     stage.update();
   }
 

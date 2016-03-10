@@ -238,7 +238,24 @@ var B2d = function() {
       fixedTimestepAccumulator -= STEP;
       world.ClearForces();
       world.m_debugDraw.m_sprite.graphics.clear();
+
+      var offset = 0;
+      for (i = 0; i < actors.length; i++) {
+        if (actors[i].id === 'player') {
+          offset = ((actors[i].skin.x + debugContext.canvas.width / 2) - 900);
+          i = actors.length;
+        }
+      }
+
+      if (offset > 0) {
+        console.log('i want to move!' + offset);
+        debugContext.save();
+        debugContext.clearRect(0,0, debugContext.canvas.width, debugContext.canvas.height);
+        debugContext.translate(-offset, 0);
+      }
+
       world.DrawDebugData();
+      debugContext.restore();
       if (bodies.length > 30) {
         bodiesToRemove.push(bodies[0]);
         bodies.splice(0,1);
