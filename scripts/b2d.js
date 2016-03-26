@@ -55,7 +55,6 @@ var B2d = function() {
     }
 
     if (secondObject !== null) {
-      console.log("first level");
       if ((firstObject.id === 'baddy') && (secondObject.id === 'player')) {
         console.log('baddy hit player');
         var tempy = secondSkin;
@@ -93,10 +92,29 @@ var B2d = function() {
         var bottom = (pTopY - npcBottom);
         var margin = 7;
         var precision = 4;
+        var margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
+
+        var side = indexOfSmallest(margens);
+        console.log(margens);
+        console.log(side);
+        if (side == 0) {
+          sideHit = 'left';
+          playerDamage(firstSkin);
+        } else if (side == 1) {
+          sideHit = 'right';
+          playerDamage(firstSkin);
+        } else if (side == 2) {
+          sideHit = 'top';
+          killBaddy(secondBody);
+        } else if (side == 3) {
+          sideHit = 'bottom';
+          playerDamage(firstSkin);
+        }
         //console.log('N right: ' + npcRightX + ' left: ' + npcLeftX + ' top: ' + npcTopY + ' bottom: ' + npcBottom);
 
         //console.log('left margin: ' + left + ' right margin ' + right + ' top margin ' + top + ' bottom margin ' + bottom);
         //bodies[0].GetUserData().skin.x;
+        /*
         if ((left < margin) && (left > -Math.abs(margin))) {
           //console.log('hit NPC on the left -- pX: ' + pRightX + ' npcX: ' + npcLeftX + ' = ' + (pRightX - npcLeftX));
           sideHit = 'left';
@@ -117,9 +135,18 @@ var B2d = function() {
             '\nleft margin: ' + left.toFixed(precision) + ' right margin ' + right.toFixed(precision) +
             '\ntop margin ' + top.toFixed(precision) + ' bottom margin ' + bottom.toFixed(precision);
         }
+        */
       }
     }
   };
+
+  var indexOfSmallest = function(a) {
+    var lowest = 0;
+    for (var i = 1; i < a.length; i++) {
+      if (a[i] < a[lowest]) lowest = i;
+    }
+    return lowest;
+  }
 
   var killBaddy = function(baddy) {
     bodiesToRemove.push(baddy);
@@ -136,7 +163,6 @@ var B2d = function() {
 
   listener.EndContact = function(contact) {
     if (!playerDead) {
-      console.log(contact);
       if (contact.GetFixtureA().GetBody().GetUserData() !== null) {
         var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
         var secondObjectID = null;

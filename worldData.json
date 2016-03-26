@@ -15,8 +15,8 @@ worldData = {
         {
           spawnX: 300,
           spawnY: 300,
-          patOne: 300,
-          patTwo: 400,
+          patOne: 280,
+          patTwo: 520,
           id: 'baddy',
           animation: 'moveLeft',
           width: 14,

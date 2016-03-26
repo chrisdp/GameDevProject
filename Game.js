@@ -401,18 +401,39 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   var location = null;
   var offset = null;
   var HP = [];
+  var HPOffset = 910;
   function updateCamera(playerData) {
     //var hpContainer = new createjs.SpriteContainer(assetManager.getSprite(sSheet));
 
+    //hpContainer.x = 50;
+    //hpContainer.y = 50;
+    location = dude.x;
+
+    offset = (location + debugContext.canvas.width / 2) - 900;
+    if (offset > 0 && offset < 2680) {
+      HPOffset = location + 460;
+      stage.setTransform(-offset);
+      txtLeft.x = location - 435;
+      txtRight.x = location + 435;
+    } else if (offset > 2680) {
+      HPOffset = 3590;
+      stage.setTransform(-2680);
+      txtLeft.x = 2695;
+      txtRight.x = 3565;
+    } else {
+      HPOffset = 910;
+      stage.setTransform(0);
+      txtLeft.x = 15;
+      txtRight.x = 885;
+    }
 
     for (var i = HP.length - 1; i > -1; i--) {
       stage.removeChild(HP[i]);
       HP.splice(i, 1);
     }
-    //console.log(HP.length);
     HP = [];
 
-    var HPOffset = 910;
+
     for (var i = 0; i < playerData.hitPoints; i++) {
       HPOffset -= 40;
       HP[i] = assetManager.getSprite(sSheet);
@@ -422,24 +443,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       //HP[i].scaleX = 1.2;
       HP[i].gotoAndPlay('heart');
       stage.addChild(HP[i]);
-    }
-    //hpContainer.x = 50;
-    //hpContainer.y = 50;
-    location = dude.x;
-
-    offset = (location + debugContext.canvas.width / 2) - 900;
-    if (offset > 0 && offset < 2680) {
-      stage.setTransform(-offset);
-      txtLeft.x = location - 435;
-      txtRight.x = location + 435;
-    } else if (offset > 2680) {
-      stage.setTransform(-2680);
-      txtLeft.x = 2695;
-      txtRight.x = 3565;
-    } else {
-      stage.setTransform(0);
-      txtLeft.x = 15;
-      txtRight.x = 885;
     }
   }
 
