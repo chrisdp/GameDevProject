@@ -14,6 +14,7 @@ var canvas = null;
 var debugCanvas = null;
 var context = null;
 var debugContext = null;
+var sSheet = 'gameAssets';
 
 // controller vars
 var gamepadConnected = false;
@@ -319,7 +320,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       addgamepad(navigator.getGamepads()[0]);
     }
     console.log(navigator.getGamepads());
-    var sSheet = 'gameAssets';
+
     // setup sprite to act as a floor skin
 
     b2d.setup();
@@ -357,6 +358,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     dude = assetManager.getSprite(sSheet);
     dude.x = playerData.spawnX;
     dude.y = playerData.spawnY;
+    dude.hp = playerData.hp;
     dude.gotoAndPlay(playerData.animation);
     stage.addChild(dude);
     b2d.spriteMake(dude, playerData.width, playerData.height, playerData.id);
@@ -396,18 +398,35 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     createjs.Ticker.addEventListener('tick', onTick);
   }
 
-  function updateNPC() {
-    for (var NPC in baddy) {
-      if (NPC.direction) {
-
-      }
-    }
-  }
-
   var location = null;
   var offset = null;
-  function updateCamera() {
+  var HP = [];
+  function updateCamera(playerData) {
+    //var hpContainer = new createjs.SpriteContainer(assetManager.getSprite(sSheet));
+
+
+    for (var i = HP.length - 1; i > -1; i--) {
+      stage.removeChild(HP[i]);
+      HP.splice(i, 1);
+    }
+    //console.log(HP.length);
+    HP = [];
+
+    var HPOffset = 910;
+    for (var i = 0; i < playerData.hitPoints; i++) {
+      HPOffset -= 40;
+      HP[i] = assetManager.getSprite(sSheet);
+      HP[i].x = HPOffset;
+      HP[i].y = 45;
+      //HP[i].scaleY = 1;
+      //HP[i].scaleX = 1.2;
+      HP[i].gotoAndPlay('heart');
+      stage.addChild(HP[i]);
+    }
+    //hpContainer.x = 50;
+    //hpContainer.y = 50;
     location = dude.x;
+
     offset = (location + debugContext.canvas.width / 2) - 900;
     if (offset > 0 && offset < 2680) {
       stage.setTransform(-offset);
@@ -426,6 +445,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
   var txtLeft = null;
   var txtRight = null;
+  var stuff = true;
   function onTick(e) {
     // TESTING FPS
 
@@ -433,11 +453,12 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     // put your other stuff here!
     // ...
     //console.log(debugging);
+    var data = b2d.playerData()
     if (debugging) {
       stage.addChild(txtLeft);
       txtLeft.visible = true;
-      var data = b2d.playerData();
       txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
+      txtLeft.text += '\nhit points: ' + data.hitPoints;
       txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
       txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
       txtLeft.text += '\nvelocity X: ' + data.vel.x.toFixed(5);
@@ -468,11 +489,18 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       }
     }
 
+
     // update the stage!
     move();
     b2d.update();
-    updateCamera();
+    updateCamera(data);
     stage.update();
+
+    if (stuff) {
+      b2d.bodysPrint();
+      stuff = !stuff;
+    }
+
   }
 
 })();

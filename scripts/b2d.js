@@ -22,6 +22,7 @@ var B2d = function() {
   var bodiesToRemove = [];
   var actors = [];
   var bodies = [];
+  var playerDead = false;
 
   // state vars
   var touchingDown = false;
@@ -33,11 +34,14 @@ var B2d = function() {
   listener.BeginContact = function(contact) {
     var firstObject = contact.GetFixtureA().GetBody().GetUserData();
     var firstSkin = contact.GetFixtureA().GetBody().GetUserData().skin;
+    var firstBody = contact.GetFixtureA().GetBody();
     var secondObject = null;
     var secondSkin = null;
+    var secondBody = null;
     if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
       secondObject = contact.GetFixtureB().GetBody().GetUserData();
       secondSkin = contact.GetFixtureB().GetBody().GetUserData().skin;
+      secondBody = contact.GetFixtureB().GetBody();
       //console.log(contact.GetFixtureA().GetBody().GetUserData());
       //console.log(contact.GetFixtureB().GetBody().GetUserData());
 
@@ -45,15 +49,31 @@ var B2d = function() {
         if (secondObject.id === 'floor') {
           touchingFloor = true;
           numOfFloor++;
-          console.log(numOfFloor);
         }
         touchingDown = true;
       }
     }
 
     if (secondObject !== null) {
-      if ((firstObject.id === 'player') &&  (secondObject.id === 'baddy')) {
-        //console.log('player hit the baddy!!!!!');
+      console.log("first level");
+      if ((firstObject.id === 'baddy') && (secondObject.id === 'player')) {
+        console.log('baddy hit player');
+        var tempy = secondSkin;
+        secondSkin = firstSkin;
+        firstSkin = tempy;
+
+        tempy = secondObject;
+        secondObject = firstObject;
+        firstObject = tempy;
+
+        tempy = secondBody;
+        secondBody = firstBody;
+        firstBody = tempy;
+      }
+
+      if ((firstObject.id === 'player') && (secondObject.id === 'baddy')) {
+
+        console.log('player hit the baddy!!!!!');
         var pRightX = firstSkin.x + firstObject.Xdif;
         var pLeftX = firstSkin.x - firstObject.Xdif;
         var pTopY = firstSkin.y - firstObject.Ydif;
@@ -80,15 +100,18 @@ var B2d = function() {
         if ((left < margin) && (left > -Math.abs(margin))) {
           //console.log('hit NPC on the left -- pX: ' + pRightX + ' npcX: ' + npcLeftX + ' = ' + (pRightX - npcLeftX));
           sideHit = 'left';
+          playerDamage(firstSkin);
         } else if ((right < margin) && (right > -Math.abs(margin))) {
           //console.log('hit NPC on the right -- pX: ' + pLeftX + ' npcX: ' + npcRightX + ' = ' + (pLeftX - npcRightX));
           sideHit = 'right';
+          playerDamage(firstSkin);
         } else if ((top < margin) && (top > -Math.abs(margin))) {
           //console.log('hit NPC on the top');
           sideHit = 'top';
+          killBaddy(secondBody);
         } else if ((bottom < margin) && (bottom > -Math.abs(margin))) {
           //console.log('hit NPC on the bottom');
-          sideHit = 'bottom';
+          playerDamage(firstSkin);
         } else {
           sideHit = 'out of margin: ' + margin +
             '\nleft margin: ' + left.toFixed(precision) + ' right margin ' + right.toFixed(precision) +
@@ -98,23 +121,41 @@ var B2d = function() {
     }
   };
 
+  var killBaddy = function(baddy) {
+    bodiesToRemove.push(baddy);
+  };
+
+  var playerDamage = function(player) {
+    player.hp--;
+    console.log(player.hp);
+    if (player.hp <= 0) {
+      bodiesToRemove.push(bodies[0]);
+      playerDead = true;
+    }
+  };
+
   listener.EndContact = function(contact) {
-    var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
-    var secondObjectID = null;
-    if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
-      secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
-      if (secondObjectID !== null) {
-        if (secondObjectID === 'floor') {
-          numOfFloor--;
-          console.log(numOfFloor);
-          if (numOfFloor <= 1) {
-            touchingFloor = false;
+    if (!playerDead) {
+      console.log(contact);
+      if (contact.GetFixtureA().GetBody().GetUserData() !== null) {
+        var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
+        var secondObjectID = null;
+        if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
+          secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+          if (secondObjectID !== null) {
+            if (secondObjectID === 'floor') {
+              numOfFloor--;
+              //console.log(numOfFloor);
+              if (numOfFloor <= 1) {
+                touchingFloor = false;
+              }
+            }
+            if (!touchingFloor) {
+              touchingDown = false;
+            }
+            //console.log(touchingDown);
           }
         }
-        if (!touchingFloor) {
-          touchingDown = false;
-        }
-        //console.log(touchingDown);
       }
     }
   };
@@ -194,6 +235,7 @@ var B2d = function() {
   };
 
   // box2d update function. delta time is used to avoid differences in simulation if frame rate drops
+  var offset = 0;
   var update = function() {
     var now = Date.now();
     var dt = now - lastTimestamp;
@@ -254,11 +296,13 @@ var B2d = function() {
       world.ClearForces();
       world.m_debugDraw.m_sprite.graphics.clear();
 
-      var offset = 0;
-      for (i = 0; i < actors.length; i++) {
-        if (actors[i].id === 'player') {
-          offset = ((actors[i].skin.x + debugContext.canvas.width / 2) - 900);
-          i = actors.length;
+      if (!playerDead) {
+        offset = 0;
+        for (i = 0; i < actors.length; i++) {
+          if (actors[i].id === 'player') {
+            offset = ((actors[i].skin.x + debugContext.canvas.width / 2) - 900);
+            i = actors.length;
+          }
         }
       }
 
@@ -274,6 +318,7 @@ var B2d = function() {
 
       world.DrawDebugData();
       debugContext.restore();
+
       if (bodies.length > 30) {
         bodiesToRemove.push(bodies[0]);
         bodies.splice(0,1);
@@ -371,13 +416,14 @@ var B2d = function() {
 
     var data = {
       pos: {
-        x: bodies[0].GetUserData().skin.x,
-        y: bodies[0].GetUserData().skin.y
+        x: (playerDead) ? 0 : bodies[0].GetUserData().skin.x,
+        y: (playerDead) ? 0 : bodies[0].GetUserData().skin.y
       },
-      vel: bodies[0].GetLinearVelocity(),
+      hitPoints: (playerDead) ? 0 : bodies[0].GetUserData().skin.hp,
+      vel: (playerDead) ? {x: 0, y: 0} : bodies[0].GetLinearVelocity(),
       touchingDown: touchingDown,
       touchingFloor: touchingFloor,
-      sideHit: sideHit
+      sideHit: sideHit,
     };
 
     return data;
@@ -389,6 +435,16 @@ var B2d = function() {
     //m_textLine += 15;
   };
 
+  // remove actor and it's skin object
+  var removeActor = function(actor) {
+    stage.removeChild(actor.skin);
+    actors.splice(actors.indexOf(actor),1);
+  }
+
+  var bodysPrint = function() {
+    console.log(actors);
+  }
+
   return {
     setup: setup,
     addDebug: addDebug,
@@ -396,6 +452,7 @@ var B2d = function() {
     spriteMake: spriteMake,
     movePlayer: movePlayer,
     playerData: playerData,
-    platformMake: platformMake
+    platformMake: platformMake,
+    bodysPrint: bodysPrint
   };
 };

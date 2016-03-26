@@ -7,7 +7,8 @@ worldData = {
           animation: 'dudeIdile',
           id: 'player',
           width: 14,
-          height: 23
+          height: 23,
+          hp: 5
         }
       ],
       baddys: [
@@ -25,12 +26,12 @@ worldData = {
           spawnX: 500,
           spawnY: 500,
           patOne: 100,
-          patTwo: 500,
+          patTwo: 1000,
           id: 'baddy',
           animation: 'moveLeft',
           width: 14,
           height: 15
-        },
+        }
       ],
       platforms: [
         {
