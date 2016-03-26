@@ -339,13 +339,18 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       //console.log(newFloor[i]);
     }
 
-    backdrop = assetManager.getSprite(sSheet);
-    backdrop.x = 0;
-    backdrop.y = 0;
-    backdrop.scaleY = 1;
-    backdrop.scaleX = 1.2;
-    backdrop.gotoAndPlay('sky');
-    stage.addChildAt(backdrop, 0);
+    var backdrop = [];
+    var bOffset = -900;
+    for (i = 0; i < 4; i++) {
+      bOffset += 900;
+      backdrop[i] = assetManager.getSprite(sSheet);
+      backdrop[i].x = bOffset;
+      backdrop[i].y = 0;
+      backdrop[i].scaleY = 1;
+      backdrop[i].scaleX = 1.2;
+      backdrop[i].gotoAndPlay('sky');
+      stage.addChildAt(backdrop[i], 0);
+    }
 
     // add player to the stage
     var playerData = worldData.levelOne.players[0];
@@ -410,6 +415,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtRight.x = location + 435;
     } else {
       stage.setTransform(0);
+      txtLeft.x = 15;
+      txtRight.x = 885;
     }
   }
 
@@ -427,10 +434,10 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtLeft.visible = true;
       var data = b2d.playerData();
       txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
-      txtLeft.text += '\nX: ' + data.pos.x;
-      txtLeft.text += '\nY: ' + data.pos.y;
-      txtLeft.text += '\nvelocity X: ' + data.vel.x;
-      txtLeft.text += '\nvelocity Y: ' + data.vel.y;
+      txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
+      txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
+      txtLeft.text += '\nvelocity X: ' + data.vel.x.toFixed(5);
+      txtLeft.text += '\nvelocity Y: ' + data.vel.y.toFixed(5);
       txtLeft.text += '\non floor: ' + data.touchingFloor;
       txtLeft.text += '\ncan jump: ' + data.touchingDown;
       txtLeft.text += '\nside hit: ' + data.sideHit;

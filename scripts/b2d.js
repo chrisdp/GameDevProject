@@ -158,15 +158,17 @@ var B2d = function() {
     var left = world.CreateBody(leftBodyDef);
     left.CreateFixture(leftFixture);
     // boundaries - right
-    var rightFixture = new b2FixtureDef;
+
+    /*var rightFixture = new b2FixtureDef;
     rightFixture.shape = new b2PolygonShape;
-    rightFixture.shape.SetAsBox(10 / SCALE, 600 / SCALE);
+    rightFixture.shape.SetAsBox(10 / SCALE, 300 / SCALE);
     var rightBodyDef = new b2BodyDef;
     rightBodyDef.type = b2Body.b2_staticBody;
     rightBodyDef.position.x = 909 / SCALE;
-    rightBodyDef.position.y = -25 / SCALE;
+    rightBodyDef.position.y = 300 / SCALE;
     var right = world.CreateBody(rightBodyDef);
     right.CreateFixture(rightFixture);
+    */
   };
 
   // box2d debugger
@@ -278,7 +280,7 @@ var B2d = function() {
   var spriteMake = function(skin, xScale, yScale, spriteId) {
     var spriteFixture = new b2FixtureDef;
     spriteFixture.density = 1;
-    spriteFixture.restitution = 0.1;
+    spriteFixture.restitution = 0;
     spriteFixture.shape = new b2PolygonShape;
     spriteFixture.shape.SetAsBox(xScale / SCALE, yScale / SCALE);
 
