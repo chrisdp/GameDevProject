@@ -52,18 +52,9 @@ worldData = {
           animation: 'platform'
         },
         {
-          spawnX: 450,
+          spawnX: 1790,
           spawnY: 590,
-          width: 1000,
-          height: 10,
-          id: 'floor',
-          restitution: 0,
-          animation: 'platform'
-        },
-        {
-          spawnX: 2430,
-          spawnY: 590,
-          width: 1000,
+          width: 1800,
           height: 10,
           id: 'floor',
           restitution: 0,

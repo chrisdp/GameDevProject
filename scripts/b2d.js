@@ -27,6 +27,7 @@ var B2d = function() {
   var touchingDown = false;
   var touchingFloor = false;
   var sideHit = null;
+  var numOfFloor = 0;
   // colision detetors
   var listener = new Box2D.Dynamics.b2ContactListener();
   listener.BeginContact = function(contact) {
@@ -43,6 +44,8 @@ var B2d = function() {
       if (secondObject.id !== null) {
         if (secondObject.id === 'floor') {
           touchingFloor = true;
+          numOfFloor++;
+          console.log(numOfFloor);
         }
         touchingDown = true;
       }
@@ -102,7 +105,11 @@ var B2d = function() {
       secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
       if (secondObjectID !== null) {
         if (secondObjectID === 'floor') {
-          touchingFloor = false;
+          numOfFloor--;
+          console.log(numOfFloor);
+          if (numOfFloor <= 1) {
+            touchingFloor = false;
+          }
         }
         if (!touchingFloor) {
           touchingDown = false;
@@ -159,16 +166,16 @@ var B2d = function() {
     left.CreateFixture(leftFixture);
     // boundaries - right
 
-    /*var rightFixture = new b2FixtureDef;
+    var rightFixture = new b2FixtureDef;
     rightFixture.shape = new b2PolygonShape;
     rightFixture.shape.SetAsBox(10 / SCALE, 300 / SCALE);
     var rightBodyDef = new b2BodyDef;
     rightBodyDef.type = b2Body.b2_staticBody;
-    rightBodyDef.position.x = 909 / SCALE;
+    rightBodyDef.position.x = 3587 / SCALE;
     rightBodyDef.position.y = 300 / SCALE;
     var right = world.CreateBody(rightBodyDef);
     right.CreateFixture(rightFixture);
-    */
+
   };
 
   // box2d debugger
@@ -208,6 +215,9 @@ var B2d = function() {
           if (actors[i].skin.direction) {
             if (actors[i].skin.patOne < actors[i].skin.x) {
               //console.log('pat one is less then x');
+              if (actors[i].skin.currentAnimation !== 'moveLeft') {
+                actors[i].skin.gotoAndPlay('moveLeft');
+              }
               if (vel.x > -1) {
                 force = -10;
               }
@@ -218,6 +228,9 @@ var B2d = function() {
             if (actors[i].skin.patTwo > actors[i].skin.x) {
               //console.log('pat two : ' + actors[i].skin.patTwo + ' is grater then x: ' + actors[i].skin.x);
               //console.log(vel);
+              if (actors[i].skin.currentAnimation !== 'moveRight') {
+                actors[i].skin.gotoAndPlay('moveRight');
+              }
               if (vel.x < 1) {
                 //console.log('changed force');
                 force = 10;
@@ -249,10 +262,14 @@ var B2d = function() {
         }
       }
 
-      if (offset > 0) {
+      if (offset > 0 && offset < 2680) {
         debugContext.save();
         debugContext.clearRect(0,0, debugContext.canvas.width, debugContext.canvas.height);
         debugContext.translate(-offset, 0);
+      } else if (offset > 2680) {
+        debugContext.save();
+        debugContext.clearRect(0,0, debugContext.canvas.width, debugContext.canvas.height);
+        debugContext.translate(-2680, 0);
       }
 
       world.DrawDebugData();

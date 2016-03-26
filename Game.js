@@ -409,10 +409,14 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   function updateCamera() {
     location = dude.x;
     offset = (location + debugContext.canvas.width / 2) - 900;
-    if (offset > 0) {
+    if (offset > 0 && offset < 2680) {
       stage.setTransform(-offset);
       txtLeft.x = location - 435;
       txtRight.x = location + 435;
+    } else if (offset > 2680) {
+      stage.setTransform(-2680);
+      txtLeft.x = 2695;
+      txtRight.x = 3565;
     } else {
       stage.setTransform(0);
       txtLeft.x = 15;
