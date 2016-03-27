@@ -28,6 +28,7 @@ var B2d = function() {
   var bodies = [];
   var stars = [];
   var playerDead = false;
+  var points = 0;
 
   // state vars
   var touchingDown = false;
@@ -107,6 +108,27 @@ var B2d = function() {
           playerDamage(firstSkin);
         }
       }
+      
+      if ((firstObject.id === 'star') && (secondObject.id === 'player')) {
+        console.log('baddy hit player');
+        var tempy = secondSkin;
+        secondSkin = firstSkin;
+        firstSkin = tempy;
+
+        tempy = secondObject;
+        secondObject = firstObject;
+        firstObject = tempy;
+
+        tempy = secondBody;
+        secondBody = firstBody;
+        firstBody = tempy;
+      }
+      
+      if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
+        kill(secondBody);
+        addPoint(firstBody, 20);
+        
+      }
     }
   };
 
@@ -133,6 +155,12 @@ var B2d = function() {
       playerDead = true;
     }
   };
+  
+  var addPoint = function(player, point) {
+    var ammount = (point == undefined) ? 10 : point;
+    points += ammount;
+    
+  }
 
   // event for when items stop touching
   listener.EndContact = function(contact) {
@@ -459,6 +487,7 @@ var B2d = function() {
       touchingDown: touchingDown,
       touchingFloor: touchingFloor,
       sideHit: sideHit,
+      points: points
     };
 
     return data;

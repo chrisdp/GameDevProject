@@ -1,8 +1,9 @@
-/*jshint browser:true */
-/*jshint devel:true */
-/*global createjs */
-/*global AssetManager */
-/*global manifest */
+/* jshint browser:true */
+/* jshint devel:true */
+/* global createjs */
+/* global AssetManager */
+/* global manifest */
+/* global worldData */
 
 // AssetManager Demo
 // Sean Morrow
@@ -301,7 +302,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
       if (upArrow) {
         b2d.movePlayer('up');
-        upArrow = false;
+        //upArrow = false;
       }
 
       if (downArrow) {
@@ -473,6 +474,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtLeft.visible = true;
       txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
       txtLeft.text += '\nhit points: ' + data.hitPoints;
+      txtLeft.text += '\nscore: ' + data.points;
       txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
       txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
       txtLeft.text += '\nvelocity X: ' + data.vel.x.toFixed(5);
