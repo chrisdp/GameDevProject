@@ -361,7 +361,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     dude.hp = playerData.hp;
     dude.gotoAndPlay(playerData.animation);
     stage.addChild(dude);
-    b2d.spriteMake(dude, playerData.width, playerData.height, playerData.id);
+    b2d.spriteMake(dude, playerData);
 
     var baddyData = worldData.levelOne.baddys;
 
@@ -374,7 +374,18 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       baddy[i].direction = true;
       baddy[i].gotoAndPlay(baddyData[i].animation);
       stage.addChild(baddy[i]);
-      b2d.spriteMake(baddy[i], baddyData[i].width, baddyData[i].height, baddyData[i].id);
+      b2d.spriteMake(baddy[i], baddyData[i]);
+    }
+    
+    var starData = worldData.levelOne.stars;
+    var stars = [];
+    for (i = 0; i < starData.length; i++) {
+      stars.push(assetManager.getSprite('gameAssets'));
+      stars[i].x = starData[i].spawnX;
+      stars[i].y = starData[i].spawnY;
+      stars[i].gotoAndPlay(starData[i].animation);
+      stage.addChild(stars[i]);
+      b2d.starMake(stars[i], starData[i]);
     }
 
     txtLeft = new createjs.Text('', '12px Arial', '#111');

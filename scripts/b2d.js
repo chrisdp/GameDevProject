@@ -1,3 +1,7 @@
+/* global stage */
+/* global Box2D */
+/* global debugContext */
+
 var B2d = function() {
 
   // Box2d vars
@@ -22,6 +26,7 @@ var B2d = function() {
   var bodiesToRemove = [];
   var actors = [];
   var bodies = [];
+  var stars = [];
   var playerDead = false;
 
   // state vars
@@ -42,8 +47,6 @@ var B2d = function() {
       secondObject = contact.GetFixtureB().GetBody().GetUserData();
       secondSkin = contact.GetFixtureB().GetBody().GetUserData().skin;
       secondBody = contact.GetFixtureB().GetBody();
-      //console.log(contact.GetFixtureA().GetBody().GetUserData());
-      //console.log(contact.GetFixtureB().GetBody().GetUserData());
 
       if (secondObject.id !== null) {
         if (secondObject.id === 'floor') {
@@ -71,32 +74,25 @@ var B2d = function() {
       }
 
       if ((firstObject.id === 'player') && (secondObject.id === 'baddy')) {
-
-        console.log('player hit the baddy!!!!!');
+        // player bounds
         var pRightX = firstSkin.x + firstObject.Xdif;
         var pLeftX = firstSkin.x - firstObject.Xdif;
         var pTopY = firstSkin.y - firstObject.Ydif;
         var pBottom = firstSkin.y + firstObject.Ydif;
-        //console.log('P right: ' + pRightX + ' left: ' + pLeftX + ' top: ' + pTopY + ' bottom: ' + pBottom);
-
-        //console.log(firstSkin.x + ' ' + firstSkin.y);
-        //console.log(secondSkin.x + ' ' + secondSkin.y);
+        
+        // NPC bounds
         var npcRightX = secondSkin.x + secondObject.Xdif;
         var npcLeftX = secondSkin.x - secondObject.Xdif;
         var npcTopY = secondSkin.y - secondObject.Ydif;
         var npcBottom = secondSkin.y + secondObject.Ydif;
 
-        var left = (pRightX - npcLeftX);
-        var right = (pLeftX - npcRightX);
-        var top = (pBottom - npcTopY);
-        var bottom = (pTopY - npcBottom);
-        var margin = 7;
-        var precision = 4;
+        // difference between sides
         var margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
 
+        // index of closest sides at the time of contact
         var side = indexOfSmallest(margens);
-        console.log(margens);
-        console.log(side);
+        
+        // update state based on what side was hit
         if (side == 0) {
           sideHit = 'left';
           playerDamage(firstSkin);
@@ -105,41 +101,16 @@ var B2d = function() {
           playerDamage(firstSkin);
         } else if (side == 2) {
           sideHit = 'top';
-          killBaddy(secondBody);
+          kill(secondBody);
         } else if (side == 3) {
           sideHit = 'bottom';
           playerDamage(firstSkin);
         }
-        //console.log('N right: ' + npcRightX + ' left: ' + npcLeftX + ' top: ' + npcTopY + ' bottom: ' + npcBottom);
-
-        //console.log('left margin: ' + left + ' right margin ' + right + ' top margin ' + top + ' bottom margin ' + bottom);
-        //bodies[0].GetUserData().skin.x;
-        /*
-        if ((left < margin) && (left > -Math.abs(margin))) {
-          //console.log('hit NPC on the left -- pX: ' + pRightX + ' npcX: ' + npcLeftX + ' = ' + (pRightX - npcLeftX));
-          sideHit = 'left';
-          playerDamage(firstSkin);
-        } else if ((right < margin) && (right > -Math.abs(margin))) {
-          //console.log('hit NPC on the right -- pX: ' + pLeftX + ' npcX: ' + npcRightX + ' = ' + (pLeftX - npcRightX));
-          sideHit = 'right';
-          playerDamage(firstSkin);
-        } else if ((top < margin) && (top > -Math.abs(margin))) {
-          //console.log('hit NPC on the top');
-          sideHit = 'top';
-          killBaddy(secondBody);
-        } else if ((bottom < margin) && (bottom > -Math.abs(margin))) {
-          //console.log('hit NPC on the bottom');
-          playerDamage(firstSkin);
-        } else {
-          sideHit = 'out of margin: ' + margin +
-            '\nleft margin: ' + left.toFixed(precision) + ' right margin ' + right.toFixed(precision) +
-            '\ntop margin ' + top.toFixed(precision) + ' bottom margin ' + bottom.toFixed(precision);
-        }
-        */
       }
     }
   };
 
+  // returns the index of the smallest value in the array
   var indexOfSmallest = function(a) {
     var lowest = 0;
     for (var i = 1; i < a.length; i++) {
@@ -148,30 +119,38 @@ var B2d = function() {
     return lowest;
   }
 
-  var killBaddy = function(baddy) {
+  // add the passed body to the array of bodies to remove from the game
+  var kill = function(baddy) {
     bodiesToRemove.push(baddy);
   };
 
+  // remove HP from player and handle 0 HP
   var playerDamage = function(player) {
     player.hp--;
     console.log(player.hp);
     if (player.hp <= 0) {
-      bodiesToRemove.push(bodies[0]);
+      kill(bodies[0]);
       playerDead = true;
     }
   };
 
+  // event for when items stop touching
   listener.EndContact = function(contact) {
+    // check for living player
     if (!playerDead) {
+      // only act on bodies with user data
       if (contact.GetFixtureA().GetBody().GetUserData() !== null) {
+        // store coliding objects id's
         var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
         var secondObjectID = null;
         if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
           secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
           if (secondObjectID !== null) {
+            // part of a fix alowing the user to touch
+            // more then one platform and not lose the
+            // ability to jump
             if (secondObjectID === 'floor') {
               numOfFloor--;
-              //console.log(numOfFloor);
               if (numOfFloor <= 1) {
                 touchingFloor = false;
               }
@@ -179,7 +158,6 @@ var B2d = function() {
             if (!touchingFloor) {
               touchingDown = false;
             }
-            //console.log(touchingDown);
           }
         }
       }
@@ -187,18 +165,20 @@ var B2d = function() {
   };
 
   listener.PostSolve = function(contact, impulse) {
-    //console.log(impulse);
+    // used after colisions and allows access to corrective data, AKA impact force
   };
 
   listener.PreSolve = function(contact, oldManifold) {
-    //console.log(contact);
+    // checks before the actual contact happens
+    // can be used for things like oneway platforms
   };
 
+  // used to construct a static body for platforms
   var platformMake = function(sprite, platform) {
 
     var newFixture = new b2FixtureDef;
     newFixture.density = 1;
-    newFixture.restitution = 0;
+    newFixture.restitution = platform.restitution;
     newFixture.shape = new b2PolygonShape;
     newFixture.shape.SetAsBox(platform.width / SCALE, platform.height / SCALE);
     var newBodyDef = new b2BodyDef;
@@ -365,12 +345,12 @@ var B2d = function() {
     actors.push(this);
   };
 
-  var spriteMake = function(skin, xScale, yScale, spriteId) {
+  var spriteMake = function(skin, data) {
     var spriteFixture = new b2FixtureDef;
     spriteFixture.density = 1;
     spriteFixture.restitution = 0;
     spriteFixture.shape = new b2PolygonShape;
-    spriteFixture.shape.SetAsBox(xScale / SCALE, yScale / SCALE);
+    spriteFixture.shape.SetAsBox(data.width / SCALE, data.height / SCALE);
 
     var spriteBodyDef = new b2BodyDef;
     spriteBodyDef.type = b2Body.b2_dynamicBody;
@@ -390,10 +370,43 @@ var B2d = function() {
     //    sprite.CreateFixture(spriteFixture);
 
     // assign actor
-    var actor = new actorObject(sprite, skin, spriteId);
-    actor.id = spriteId;
-    actor.Xdif = xScale;
-    actor.Ydif = yScale;
+    var actor = new actorObject(sprite, skin, data.id);
+    actor.id = data.id;
+    actor.Xdif = data.width;
+    actor.Ydif = data.height;
+    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
+    bodies.push(sprite);
+  };
+  
+  var starMake = function(skin, data) {
+    var spriteFixture = new b2FixtureDef;
+    spriteFixture.density = 1;
+    spriteFixture.restitution = data.restitution;
+    spriteFixture.shape = new b2PolygonShape;
+    spriteFixture.shape.SetAsBox(data.width / SCALE, data.height / SCALE);
+
+    var spriteBodyDef = new b2BodyDef;
+    spriteBodyDef.type = b2Body.b2_dynamicBody;
+    spriteBodyDef.fixedRotation = true;
+    spriteBodyDef.position.x = skin.x / SCALE;
+    spriteBodyDef.position.y = skin.y / SCALE;
+    var sprite = world.CreateBody(spriteBodyDef);
+
+    sprite.CreateFixture(spriteFixture);
+    //    spriteFixture = new b2FixtureDef;
+    //    spriteFixture.density = 0;
+    //    spriteFixture.restitution = 0;
+    //    spriteFixture.shape = new b2PolygonShape;
+    //    spriteFixture.shape.SetAsBox(0.5, 0.2, new b2Vec2(1.2, 3.4));
+    //    spriteFixture.shape.m_centroid.x = 10;
+    //    console.log(spriteFixture);
+    //    sprite.CreateFixture(spriteFixture);
+
+    // assign actor
+    var actor = new actorObject(sprite, skin, data.id);
+    actor.id = data.id;
+    actor.Xdif = data.width;
+    actor.Ydif = data.height;
     sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
     bodies.push(sprite);
   };
@@ -411,13 +424,9 @@ var B2d = function() {
       maxNegVel = speed;
     }
 
-    //console.log(maxVel);
-    //console.log(vel);
     switch (where) {
     case 'left':
-      //console.log(vel.x);
       if (vel.x > maxNegVel) {
-        //console.log('move left passed');
         forceX = -20;
       }
       break;
@@ -453,12 +462,6 @@ var B2d = function() {
     };
 
     return data;
-    //debugDraw.DrawString(5, m_textLine,
-    //                       'Position:%.3f,%.3f Angle:%.3f', pos.x, pos.y, angle * RADTODEG);
-    //m_textLine += 15;
-    //m_debugDraw.DrawString(5, m_textLine,
-    //                         'Velocity:%.3f,%.3f Angular velocity:%.3f', vel.x, vel.y, angularVel * RADTODEG);
-    //m_textLine += 15;
   };
 
   // remove actor and it's skin object
@@ -476,6 +479,7 @@ var B2d = function() {
     addDebug: addDebug,
     update: update,
     spriteMake: spriteMake,
+    starMake: starMake,
     movePlayer: movePlayer,
     playerData: playerData,
     platformMake: platformMake,

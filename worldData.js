@@ -1,14 +1,15 @@
-worldData = {
+var worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 220,
-          spawnY: 200,
+          spawnX: 80,
+          spawnY: 360,
           animation: 'dudeIdile',
           id: 'player',
           width: 14,
           height: 23,
-          hp: 5
+          hp: 5, 
+          points: 0
         }
       ],
       baddys: [
@@ -96,7 +97,8 @@ worldData = {
           id: 'floor',
           restitution: 0,
           animation: 'platform'
-        },
+        }
+        /*,
         {
           spawnX: 1000,
           spawnY: 300,
@@ -105,6 +107,36 @@ worldData = {
           id: 'floor',
           restitution: 0,
           animation: 'platform'
+        }
+        */
+      ], 
+      stars: [
+        {
+          spawnX: 255,
+          spawnY: 20,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 330,
+          spawnY: 20,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 400,
+          spawnY: 20,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
         }
       ]
     }
