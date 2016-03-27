@@ -58,9 +58,7 @@ var B2d = function() {
       }
     }
 
-    if (secondObject !== null) {
-      if ((firstObject.id === 'baddy') && (secondObject.id === 'player')) {
-        console.log('baddy hit player');
+    var swapBodies = function() {
         var tempy = secondSkin;
         secondSkin = firstSkin;
         firstSkin = tempy;
@@ -72,27 +70,34 @@ var B2d = function() {
         tempy = secondBody;
         secondBody = firstBody;
         firstBody = tempy;
+    };
+
+    if (secondObject !== null) {
+
+      // ----------------- Checking for NPC's
+      if ((firstObject.id === 'baddy') && (secondObject.id === 'player')) {
+        swapBodies();
       }
 
       if ((firstObject.id === 'player') && (secondObject.id === 'baddy')) {
         // player bounds
-        var pRightX = firstSkin.x + firstObject.Xdif;
-        var pLeftX = firstSkin.x - firstObject.Xdif;
-        var pTopY = firstSkin.y - firstObject.Ydif;
-        var pBottom = firstSkin.y + firstObject.Ydif;
-        
+        let pRightX = firstSkin.x + firstObject.Xdif;
+        let pLeftX = firstSkin.x - firstObject.Xdif;
+        let pTopY = firstSkin.y - firstObject.Ydif;
+        let pBottom = firstSkin.y + firstObject.Ydif;
+
         // NPC bounds
-        var npcRightX = secondSkin.x + secondObject.Xdif;
-        var npcLeftX = secondSkin.x - secondObject.Xdif;
-        var npcTopY = secondSkin.y - secondObject.Ydif;
-        var npcBottom = secondSkin.y + secondObject.Ydif;
+        let npcRightX = secondSkin.x + secondObject.Xdif;
+        let npcLeftX = secondSkin.x - secondObject.Xdif;
+        let npcTopY = secondSkin.y - secondObject.Ydif;
+        let npcBottom = secondSkin.y + secondObject.Ydif;
 
         // difference between sides
-        var margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
+        let margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
 
         // index of closest sides at the time of contact
-        var side = indexOfSmallest(margens);
-        
+        let side = indexOfSmallest(margens);
+
         // update state based on what side was hit
         if (side == 0) {
           sideHit = 'left';
@@ -103,31 +108,22 @@ var B2d = function() {
         } else if (side == 2) {
           sideHit = 'top';
           kill(secondBody);
+          addPoint(firstSkin, 60);
         } else if (side == 3) {
           sideHit = 'bottom';
           playerDamage(firstSkin);
         }
       }
-      
+
+      // ----------------- Checking for star items
       if ((firstObject.id === 'star') && (secondObject.id === 'player')) {
-        console.log('baddy hit player');
-        var tempy = secondSkin;
-        secondSkin = firstSkin;
-        firstSkin = tempy;
-
-        tempy = secondObject;
-        secondObject = firstObject;
-        firstObject = tempy;
-
-        tempy = secondBody;
-        secondBody = firstBody;
-        firstBody = tempy;
+        swapBodies();
       }
-      
+
       if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
         kill(secondBody);
         addPoint(firstBody, 20);
-        
+
       }
     }
   };
@@ -155,11 +151,11 @@ var B2d = function() {
       playerDead = true;
     }
   };
-  
+
   var addPoint = function(player, point) {
     var ammount = (point == undefined) ? 10 : point;
     points += ammount;
-    
+
   }
 
   // event for when items stop touching
@@ -217,10 +213,8 @@ var B2d = function() {
     floor.CreateFixture(newFixture);
 
     // assign actor for floor
-    var actor = new actorObject(floor, sprite, platform.id);
-    actor.id = platform.id;
-    actor.Xdif = platform.width;
-    actor.Ydif = platform.height;
+    var actor = new actorObject(floor, sprite, platform);
+ 
     floor.SetUserData(actor);
   };
 
@@ -361,10 +355,13 @@ var B2d = function() {
   };
 
   // actor object - this is responsible for taking the body's position and translating it to your easel display object
-  var actorObject = function(body, skin, id) {
-    this.id = id;
+  var actorObject = function(body, skin, data) {
+
     this.body = body;
     this.skin = skin;
+    this.id = data.id;
+    this.Xdif = data.width;
+    this.Ydif = data.height;
     this.update = function() {  // translate box2d positions to pixels
       this.skin.rotation = this.body.GetAngle() * (180 / Math.PI);
       this.skin.x = this.body.GetWorldCenter().x * SCALE;
@@ -380,32 +377,15 @@ var B2d = function() {
     spriteFixture.shape = new b2PolygonShape;
     spriteFixture.shape.SetAsBox(data.width / SCALE, data.height / SCALE);
 
-    var spriteBodyDef = new b2BodyDef;
-    spriteBodyDef.type = b2Body.b2_dynamicBody;
-    spriteBodyDef.fixedRotation = true;
-    spriteBodyDef.position.x = skin.x / SCALE;
-    spriteBodyDef.position.y = skin.y / SCALE;
-    var sprite = world.CreateBody(spriteBodyDef);
-
-    sprite.CreateFixture(spriteFixture);
-    //    spriteFixture = new b2FixtureDef;
-    //    spriteFixture.density = 0;
-    //    spriteFixture.restitution = 0;
-    //    spriteFixture.shape = new b2PolygonShape;
-    //    spriteFixture.shape.SetAsBox(0.5, 0.2, new b2Vec2(1.2, 3.4));
-    //    spriteFixture.shape.m_centroid.x = 10;
-    //    console.log(spriteFixture);
-    //    sprite.CreateFixture(spriteFixture);
+    var sprite = bodieMake(skin, spriteFixture);
 
     // assign actor
-    var actor = new actorObject(sprite, skin, data.id);
-    actor.id = data.id;
-    actor.Xdif = data.width;
-    actor.Ydif = data.height;
+    var actor = new actorObject(sprite, skin, data);
+
     sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
     bodies.push(sprite);
   };
-  
+
   var starMake = function(skin, data) {
     var spriteFixture = new b2FixtureDef;
     spriteFixture.density = 1;
@@ -413,6 +393,24 @@ var B2d = function() {
     spriteFixture.shape = new b2PolygonShape;
     spriteFixture.shape.SetAsBox(data.width / SCALE, data.height / SCALE);
 
+    var sprite = bodieMake(skin, spriteFixture);
+
+    // assign actor
+    var actor = new actorObject(sprite, skin, data);
+    //setActorProps(actor,data);
+
+    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
+    stars.push(sprite);
+  };
+
+  var setActorProps = function(actor, data) {
+    actor.id = data.id;
+    actor.Xdif = data.width;
+    actor.Ydif = data.height;
+  };
+
+  var bodieMake = function(skin, fixture) {
+
     var spriteBodyDef = new b2BodyDef;
     spriteBodyDef.type = b2Body.b2_dynamicBody;
     spriteBodyDef.fixedRotation = true;
@@ -420,23 +418,9 @@ var B2d = function() {
     spriteBodyDef.position.y = skin.y / SCALE;
     var sprite = world.CreateBody(spriteBodyDef);
 
-    sprite.CreateFixture(spriteFixture);
-    //    spriteFixture = new b2FixtureDef;
-    //    spriteFixture.density = 0;
-    //    spriteFixture.restitution = 0;
-    //    spriteFixture.shape = new b2PolygonShape;
-    //    spriteFixture.shape.SetAsBox(0.5, 0.2, new b2Vec2(1.2, 3.4));
-    //    spriteFixture.shape.m_centroid.x = 10;
-    //    console.log(spriteFixture);
-    //    sprite.CreateFixture(spriteFixture);
+    sprite.CreateFixture(fixture);
 
-    // assign actor
-    var actor = new actorObject(sprite, skin, data.id);
-    actor.id = data.id;
-    actor.Xdif = data.width;
-    actor.Ydif = data.height;
-    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
-    bodies.push(sprite);
+    return sprite;
   };
 
   var movePlayer = function(where, speed) {
