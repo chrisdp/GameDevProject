@@ -50,11 +50,14 @@ var B2d = function() {
       secondBody = contact.GetFixtureB().GetBody();
 
       if (secondObject.id !== null) {
-        if (secondObject.id === 'floor') {
-          touchingFloor = true;
-          numOfFloor++;
+        if (secondObject.id !== 'star' && firstObject.id !== 'star') {
+          if ((secondObject.id === 'floor' || firstObject.id === 'floor') && (secondObject.id === 'player' || firstObject.id === 'player')) {
+            touchingFloor = true;
+            numOfFloor++;
+          }
+          //console.log(secondObject.id + ' ' + firstObject.id);
+          touchingDown = true;
         }
-        touchingDown = true;
       }
     }
 
@@ -173,7 +176,7 @@ var B2d = function() {
             // part of a fix alowing the user to touch
             // more then one platform and not lose the
             // ability to jump
-            if (secondObjectID === 'floor') {
+            if ((secondObjectID === 'floor' || firstObjectID === 'floor') && (secondObjectID === 'player' || firstObjectID === 'player')) {
               numOfFloor--;
               if (numOfFloor <= 1) {
                 touchingFloor = false;
@@ -214,7 +217,7 @@ var B2d = function() {
 
     // assign actor for floor
     var actor = new actorObject(floor, sprite, platform);
- 
+
     floor.SetUserData(actor);
   };
 

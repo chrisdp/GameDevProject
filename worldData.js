@@ -8,7 +8,7 @@ var worldData = {
           id: 'player',
           width: 14,
           height: 23,
-          hp: 5, 
+          hp: 5,
           points: 0
         }
       ],
@@ -97,8 +97,7 @@ var worldData = {
           id: 'floor',
           restitution: 0,
           animation: 'platform'
-        }
-        /*,
+        },
         {
           spawnX: 1000,
           spawnY: 300,
@@ -108,8 +107,8 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         }
-        */
-      ], 
+
+      ],
       stars: [
         {
           spawnX: 255,

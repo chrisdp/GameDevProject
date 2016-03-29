@@ -377,7 +377,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       stage.addChild(baddy[i]);
       b2d.spriteMake(baddy[i], baddyData[i]);
     }
-    
+
     var starData = worldData.levelOne.stars;
     var stars = [];
     for (i = 0; i < starData.length; i++) {
