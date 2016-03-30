@@ -55,7 +55,7 @@ var B2d = function() {
             touchingFloor = true;
             numOfFloor++;
           }
-          //console.log(secondObject.id + ' ' + firstObject.id);
+          // TODO: fix jump enabled when touching star
           touchingDown = true;
         }
       }
@@ -126,7 +126,6 @@ var B2d = function() {
       if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
         kill(secondBody);
         addPoint(firstBody, 20);
-
       }
     }
   };
@@ -158,7 +157,6 @@ var B2d = function() {
   var addPoint = function(player, point) {
     var ammount = (point == undefined) ? 10 : point;
     points += ammount;
-
   }
 
   // event for when items stop touching
@@ -272,7 +270,9 @@ var B2d = function() {
     var dt = now - lastTimestamp;
     fixedTimestepAccumulator += dt;
     lastTimestamp = now;
+
     while (fixedTimestepAccumulator >= STEP) {
+
       // remove bodies before world timestep
       for (var i = 0, l = bodiesToRemove.length; i < l; i++) {
         removeActor(bodiesToRemove[i].GetUserData());
@@ -365,7 +365,8 @@ var B2d = function() {
     this.id = data.id;
     this.Xdif = data.width;
     this.Ydif = data.height;
-    this.update = function() {  // translate box2d positions to pixels
+    this.update = function() {
+      // translate box2d positions to pixels
       this.skin.rotation = this.body.GetAngle() * (180 / Math.PI);
       this.skin.x = this.body.GetWorldCenter().x * SCALE;
       this.skin.y = this.body.GetWorldCenter().y * SCALE;
@@ -385,7 +386,7 @@ var B2d = function() {
     // assign actor
     var actor = new actorObject(sprite, skin, data);
 
-    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
+    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later:
     bodies.push(sprite);
   };
 
@@ -419,6 +420,7 @@ var B2d = function() {
     spriteBodyDef.fixedRotation = true;
     spriteBodyDef.position.x = skin.x / SCALE;
     spriteBodyDef.position.y = skin.y / SCALE;
+    //spriteBodyDef.gravityScale = 0;
     var sprite = world.CreateBody(spriteBodyDef);
 
     sprite.CreateFixture(fixture);

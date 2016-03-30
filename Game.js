@@ -16,7 +16,7 @@ var debugCanvas = null;
 var context = null;
 var debugContext = null;
 var sSheet = 'gameAssets';
-
+var plaformText = [];
 // controller vars
 var gamepadConnected = false;
 var controllers = {};
@@ -154,12 +154,13 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
   // ------------------------------------------------------------ show the debugger
   var debugging;
-
+  var platformTextFlag;
   $('#debug').on('click', function() {
     $('#debugCanvas').toggle();
     console.log('debug button clicked');
     debugging = (debugging) ? false : true;
     setCookie('debug', debugging, 30);
+    platformTextFlag = true;
   });
 
   // ------------------------------------------------------------ event handlers
@@ -179,6 +180,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     if (debugging === true) {
       console.log('debugger enabled' + debugging);
       $('#debugCanvas').toggle();
+      platformTextFlag = debugging;
     }
     setupCanvas();
 
@@ -338,6 +340,15 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       newFloor[i].gotoAndPlay(temp.animation);
       stage.addChild(newFloor[i]);
       b2d.platformMake(newFloor[i], temp);
+      plaformText.push(new createjs.Text('', '12px Arial', '#111'));
+      plaformText[i].lineWidth = 550;
+      plaformText[i].lineHeight = 0;
+      plaformText[i].textBaseline = 'top';
+      plaformText[i].textAlign = 'center';
+      plaformText[i].x = temp.spawnX;
+      plaformText[i].y = temp.spawnY - 30;
+      plaformText[i].text = 'Platform: ' + i;
+
       //console.log(newFloor[i]);
     }
 
@@ -446,11 +457,11 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     HP = [];
 
 
-    for (var i = 0; i < playerData.hitPoints; i++) {
-      HPOffset -= 40;
+    for (i = 0; i < playerData.hitPoints; i++) {
+      HPOffset -= 35;
       HP[i] = assetManager.getSprite(sSheet);
       HP[i].x = HPOffset;
-      HP[i].y = 45;
+      HP[i].y = 25;
       //HP[i].scaleY = 1;
       //HP[i].scaleX = 1.2;
       HP[i].gotoAndPlay('heart');
@@ -488,6 +499,13 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtRight.visible = true;
       txtRight.text = ((gamepadConnected) ? 'connected' : 'disconnected') + ' :gamepad';
 
+      if (platformTextFlag) {
+        for (var i = 0; i < plaformText.length; i++) {
+          stage.addChild(plaformText[i]);
+        }
+        platformTextFlag = false;
+      }
+
       // Controller Debugger
       if ($('#controllerDebug:visible').length === 0) {
         $('#controllerDebug').show();
@@ -499,6 +517,13 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
       stage.removeChild(txtRight);
       txtRight.visible = false;
+
+      if (platformTextFlag) {
+        for (var i = 0; i < plaformText.length; i++) {
+          stage.removeChild(plaformText[i]);
+        }
+        platformTextFlag = false;
+      }
 
       if ($('#controllerDebug:visible').length === 1) {
         $('#controllerDebug').hide();

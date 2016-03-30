@@ -8,7 +8,7 @@ var worldData = {
           id: 'player',
           width: 14,
           height: 23,
-          hp: 5,
+          hp: 10,
           points: 0
         }
       ],
@@ -35,7 +35,16 @@ var worldData = {
         }
       ],
       platforms: [
-        {
+        { // main floor
+          spawnX: 1790,
+          spawnY: 590,
+          width: 1800,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p1
           spawnX: 400,
           spawnY: 300,
           width: 200,
@@ -48,15 +57,6 @@ var worldData = {
           spawnX: 200,
           spawnY: 488,
           width: 500,
-          height: 10,
-          id: 'floor',
-          restitution: 0,
-          animation: 'platform'
-        },
-        {
-          spawnX: 1790,
-          spawnY: 590,
-          width: 1800,
           height: 10,
           id: 'floor',
           restitution: 0,
@@ -110,6 +110,7 @@ var worldData = {
 
       ],
       stars: [
+        // star group one
         {
           spawnX: 255,
           spawnY: 20,
@@ -136,6 +137,115 @@ var worldData = {
           width: 10,
           height: 10,
           restitution: 1
+        },
+        // hidden star group
+        {
+          spawnX: 500,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 550,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 600,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 650,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 700,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 750,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 800,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 850,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 900,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 950,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 1000,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
+        },
+        {
+          spawnX: 1050,
+          spawnY: -50,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 0
         }
       ]
     }
