@@ -2,7 +2,7 @@ var worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 80,
+          spawnX: 1300,
           spawnY: 360,
           animation: 'dudeIdile',
           id: 'player',
@@ -32,6 +32,16 @@ var worldData = {
           animation: 'moveLeft',
           width: 14,
           height: 15
+        },
+        {
+          spawnX: 1088,
+          spawnY: 466,
+          patOne: 1025,
+          patTwo: 1185,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
         }
       ],
       platforms: [
@@ -53,7 +63,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        { // p2
           spawnX: 200,
           spawnY: 488,
           width: 500,
@@ -62,7 +72,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        { // p3
           spawnX: 100,
           spawnY: 400,
           width: 150,
@@ -71,7 +81,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        { // p4
           spawnX: 850,
           spawnY: 200,
           width: 100,
@@ -80,7 +90,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        { // p5
           spawnX: 330,
           spawnY: 100,
           width: 100,
@@ -89,7 +99,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        { // p6
           spawnX: 750,
           spawnY: -30,
           width: 300,
@@ -98,7 +108,7 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        {
+        /*{ // p7
           spawnX: 1000,
           spawnY: 300,
           width: 10,
@@ -106,8 +116,71 @@ var worldData = {
           id: 'floor',
           restitution: 0,
           animation: 'platform'
-        }
+        },*/
+        { // p7
+          spawnX: 1120,
+          spawnY: 500,
+          width: 120,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p8
+          spawnX: 1150,
+          spawnY: 425,
+          width: 150,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p9
+          spawnX: 1300,
+          spawnY: 463,
+          width: 10,
+          height: 48,
+          id: 'wall',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p10
+          spawnX: 1265,
+          spawnY: 500,
+          width: 30,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p11
+          spawnX: 1850,
+          spawnY: 550,
+          width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p12
+          spawnX: 1950,
+          spawnY: 475,
+          width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
 
+        { // p12
+          spawnX: 2050,
+          spawnY: 400,
+          width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        }
       ],
       stars: [
         // star group one

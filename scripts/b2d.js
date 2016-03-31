@@ -176,7 +176,7 @@ var B2d = function() {
             // ability to jump
             if ((secondObjectID === 'floor' || firstObjectID === 'floor') && (secondObjectID === 'player' || firstObjectID === 'player')) {
               numOfFloor--;
-              if (numOfFloor <= 1) {
+              if (numOfFloor <= 0) {
                 touchingFloor = false;
               }
             }

@@ -336,7 +336,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       newFloor[i].x = temp.spawnX;
       newFloor[i].y = temp.spawnY;
       newFloor[i].scaleX = temp.width / 200;
-      newFloor[i].scaleY = 0.8;
+      newFloor[i].scaleY = temp.height / 12;
+
+      console.log(temp.height / 12);
       newFloor[i].gotoAndPlay(temp.animation);
       stage.addChild(newFloor[i]);
       b2d.platformMake(newFloor[i], temp);
@@ -405,16 +407,17 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     txtLeft.lineHeight = 15;
     txtLeft.textBaseline = 'top';
     txtLeft.textAlign = 'left';
-    txtLeft.y = 15;
+    txtLeft.y = 50;
     txtLeft.x = 15;
 
-    txtRight = new createjs.Text('', '12px Arial', '#111');
-    txtRight.lineWidth = 550;
-    txtRight.lineHeight = 15;
-    txtRight.textBaseline = 'top';
-    txtRight.textAlign = 'right';
-    txtRight.y = 15;
-    txtRight.x = 885;
+    txtScore = new createjs.Text('', '32px Arial', '#fff');
+    txtScore.lineWidth = 550;
+    txtScore.lineHeight = 15;
+    txtScore.textBaseline = 'top';
+    txtScore.textAlign = 'right';
+    txtScore.y = 45;
+    txtScore.x = 885;
+    stage.addChild(txtScore);
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
@@ -437,17 +440,17 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       HPOffset = location + 460;
       stage.setTransform(-offset);
       txtLeft.x = location - 435;
-      txtRight.x = location + 435;
+      txtScore.x = location + 435;
     } else if (offset > 2680) {
       HPOffset = 3590;
       stage.setTransform(-2680);
       txtLeft.x = 2695;
-      txtRight.x = 3565;
+      txtScore.x = 3565;
     } else {
       HPOffset = 910;
       stage.setTransform(0);
       txtLeft.x = 15;
-      txtRight.x = 885;
+      txtScore.x = 885;
     }
 
     for (var i = HP.length - 1; i > -1; i--) {
@@ -470,7 +473,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   }
 
   var txtLeft = null;
-  var txtRight = null;
+  var txtScore = null;
   var stuff = true;
   function onTick(e) {
     // TESTING FPS
@@ -493,11 +496,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       txtLeft.text += '\non floor: ' + data.touchingFloor;
       txtLeft.text += '\ncan jump: ' + data.touchingDown;
       txtLeft.text += '\nside hit: ' + data.sideHit;
-
-      // Right Text Debugger
-      stage.addChild(txtRight);
-      txtRight.visible = true;
-      txtRight.text = ((gamepadConnected) ? 'connected' : 'disconnected') + ' :gamepad';
+      txtLeft.text += ((gamepadConnected) ? '\nconnected' : '\ndisconnected') + ' :gamepad';
 
       if (platformTextFlag) {
         for (var i = 0; i < plaformText.length; i++) {
@@ -515,8 +514,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       stage.removeChild(txtLeft);
       txtLeft.visible = false;
 
-      stage.removeChild(txtRight);
-      txtRight.visible = false;
+      txtScore.text = data.points;
 
       if (platformTextFlag) {
         for (var i = 0; i < plaformText.length; i++) {
