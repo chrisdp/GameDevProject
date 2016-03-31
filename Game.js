@@ -514,8 +514,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       stage.removeChild(txtLeft);
       txtLeft.visible = false;
 
-      txtScore.text = data.points;
-
       if (platformTextFlag) {
         for (var i = 0; i < plaformText.length; i++) {
           stage.removeChild(plaformText[i]);
@@ -528,6 +526,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       }
     }
 
+    txtScore.text = data.points;
 
     // update the stage!
     move();

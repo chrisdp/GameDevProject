@@ -2,7 +2,7 @@ var worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 1300,
+          spawnX: 40,
           spawnY: 360,
           animation: 'dudeIdile',
           id: 'player',
@@ -11,6 +11,7 @@ var worldData = {
           hp: 10,
           points: 0
         }
+
       ],
       baddys: [
         {
@@ -38,6 +39,38 @@ var worldData = {
           spawnY: 466,
           patOne: 1025,
           patTwo: 1185,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
+        },
+        // pit baddys
+        {
+          spawnX: 2300,
+          spawnY: 466,
+          patOne: 2225,
+          patTwo: 2440,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
+        },
+        {
+          spawnX: 2500,
+          spawnY: 466,
+          patOne: 2470,
+          patTwo: 2570,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
+        },
+
+        {
+          spawnX: 2600,
+          spawnY: 466,
+          patOne: 2600,
+          patTwo: 2750,
           id: 'baddy',
           animation: 'moveLeft',
           width: 14,
@@ -172,10 +205,37 @@ var worldData = {
           animation: 'platform'
         },
 
-        { // p12
+        { // p13
           spawnX: 2050,
           spawnY: 400,
           width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p14
+          spawnX: 2110,
+          spawnY: 550,
+          width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p15
+          spawnX: 2080,
+          spawnY: 475,
+          width: 100,
+          height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p16
+          spawnX: 2000,
+          spawnY: 550,
+          width: 60,
           height: 50,
           id: 'floor',
           restitution: 0,
