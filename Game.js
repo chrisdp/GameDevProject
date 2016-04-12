@@ -443,15 +443,21 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     txtLeft.y = 50;
     txtLeft.x = 15;
 
-    txtScore = null;
-    txtScore = new createjs.Text('', '32px Arial', '#fff');
-    txtScore.lineWidth = 550;
-    txtScore.lineHeight = 15;
-    txtScore.textBaseline = 'top';
-    txtScore.textAlign = 'right';
-    txtScore.y = 45;
-    txtScore.x = 885;
-    stage.addChild(txtScore);
+    txtScoreOutline = null;
+    txtScoreOutline = new createjs.Text('', '32px Arial', '#000');
+    txtScoreOutline.lineWidth = 550;
+    txtScoreOutline.lineHeight = 15;
+    txtScoreOutline.outline = 5;
+    txtScoreOutline.textBaseline = 'top';
+    txtScoreOutline.textAlign = 'right';
+    txtScoreOutline.y = 45;
+    txtScoreOutline.x = 885;
+
+    txtScore = txtScoreOutline.clone();
+    txtScore.outline = false;
+    txtScore.color = '#FFD700';
+
+    stage.addChild(txtScoreOutline, txtScore);
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
@@ -475,16 +481,19 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       stage.setTransform(-offset);
       txtLeft.x = location - 435;
       txtScore.x = location + 435;
+      txtScoreOutline.x = location + 435;
     } else if (offset > 2680) {
       HPOffset = 3590;
       stage.setTransform(-2680);
       txtLeft.x = 2695;
       txtScore.x = 3565;
+      txtScoreOutline.x = 3565;
     } else {
       HPOffset = 910;
       stage.setTransform(0);
       txtLeft.x = 15;
       txtScore.x = 885;
+      txtScoreOutline.x = 885;
     }
 
     for (var i = HP.length - 1; i > -1; i--) {
@@ -507,6 +516,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
   var txtLeft = null;
   var txtScore = null;
+  var txtScoreOutline = null;
 
   function onTick(e) {
     // TESTING FPS
@@ -565,6 +575,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
         }
       }
 
+      txtScoreOutline.text = data.points;
       txtScore.text = data.points;
 
       // update the stage!

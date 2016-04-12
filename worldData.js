@@ -152,7 +152,7 @@ var worldData = {
         },
         { // p7
           spawnX: 1120,
-          spawnY: 500,
+          spawnY: 501,
           width: 120,
           height: 10,
           id: 'floor',
@@ -179,7 +179,7 @@ var worldData = {
         },
         { // p10
           spawnX: 1265,
-          spawnY: 500,
+          spawnY: 501,
           width: 30,
           height: 10,
           id: 'floor',

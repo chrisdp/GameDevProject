@@ -156,6 +156,18 @@ var B2d = function() {
     if (player.hp <= 0) {
       kill(bodies[0]);
       playerDead = true;
+    } else {
+      var forceX = 0;
+      var forceY = 0;
+      if (sideHit === 'left') {
+        forceX = -100;
+        forceY = -100;
+      } else if (sideHit === 'right') {
+        forceX = 100;
+        forceY = -100;
+      }
+      bodies[0].SetLinearVelocity(new b2Vec2(0,0));
+      bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
     }
   };
 
@@ -480,6 +492,9 @@ var B2d = function() {
     case 'up':
       if ((touchingDown) && (vel.y > -3)) {
         forceY = -250;
+        if (vel.y > -3) {
+          touchingDown = false;
+        }
       }
       break;
     case 'down':
@@ -517,7 +532,7 @@ var B2d = function() {
   // remove actor and it's skin object
   var removeActor = function(actor) {
     //if (actors.length > 0) {
-    console.log(actor);
+    //console.log(actor);
     stage.removeChild(actor.skin);
     actors.splice(actors.indexOf(actor),1);
     //}
