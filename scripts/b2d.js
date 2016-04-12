@@ -84,22 +84,22 @@ var B2d = function() {
 
       if ((firstObject.id === 'player') && (secondObject.id === 'baddy')) {
         // player bounds
-        let pRightX = firstSkin.x + firstObject.Xdif;
-        let pLeftX = firstSkin.x - firstObject.Xdif;
-        let pTopY = firstSkin.y - firstObject.Ydif;
-        let pBottom = firstSkin.y + firstObject.Ydif;
+        var pRightX = firstSkin.x + firstObject.Xdif;
+        var pLeftX = firstSkin.x - firstObject.Xdif;
+        var pTopY = firstSkin.y - firstObject.Ydif;
+        var pBottom = firstSkin.y + firstObject.Ydif;
 
         // NPC bounds
-        let npcRightX = secondSkin.x + secondObject.Xdif;
-        let npcLeftX = secondSkin.x - secondObject.Xdif;
-        let npcTopY = secondSkin.y - secondObject.Ydif;
-        let npcBottom = secondSkin.y + secondObject.Ydif;
+        var npcRightX = secondSkin.x + secondObject.Xdif;
+        var npcLeftX = secondSkin.x - secondObject.Xdif;
+        var npcTopY = secondSkin.y - secondObject.Ydif;
+        var npcBottom = secondSkin.y + secondObject.Ydif;
 
         // difference between sides
-        let margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
+        var margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
 
         // index of closest sides at the time of contact
-        let side = indexOfSmallest(margens);
+        var side = indexOfSmallest(margens);
 
         // update state based on what side was hit
         if (side == 0) {

@@ -337,6 +337,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       newFloor[i].y = temp.spawnY;
       newFloor[i].scaleX = temp.width / 200;
       newFloor[i].scaleY = temp.height / 12;
+      // TODO graphcs API for recs
 
       console.log(temp.height / 12);
       newFloor[i].gotoAndPlay(temp.animation);
