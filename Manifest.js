@@ -41,6 +41,16 @@ var manifest = [
     src: 'sounds/thump.ogg',
     id: 'fall',
     data: 4
+  },
+  {
+    src: 'sounds/playerdamage.ogg',
+    id: 'playerdamage',
+    data: 4
+  },
+  {
+    src: 'sounds/epicbattle.ogg',
+    id: 'epicwin',
+    data: 4
   }
 
   /**

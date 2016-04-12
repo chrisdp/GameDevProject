@@ -167,6 +167,7 @@ var B2d = function() {
         forceY = -100;
       }
       bodies[0].SetLinearVelocity(new b2Vec2(0,0));
+      bodies[0].SetAngularVelocity(0);
       bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
     }
   };
