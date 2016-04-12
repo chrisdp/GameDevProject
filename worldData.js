@@ -3,7 +3,7 @@ var worldData = {
       players: [
         {
           spawnX: 40,
-          spawnY: 360,
+          spawnY: -3000,
           animation: 'dudeIdile',
           id: 'player',
           width: 14,

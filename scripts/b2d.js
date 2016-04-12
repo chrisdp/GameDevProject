@@ -51,28 +51,33 @@ var B2d = function() {
 
       if (secondObject.id !== null) {
         if (secondObject.id !== 'star' && firstObject.id !== 'star') {
-          if ((secondObject.id === 'floor' || firstObject.id === 'floor') && (secondObject.id === 'player' || firstObject.id === 'player')) {
-            touchingFloor = true;
-            numOfFloor++;
+          if (secondObject.id !== 'baddy' && firstObject.id !== 'baddy') {
+
+            if ((secondObject.id === 'floor' || firstObject.id === 'floor') &&
+              (secondObject.id === 'floor' || firstObject.id === 'floor')) {
+              touchingFloor = true;
+              numOfFloor++;
+              console.log(numOfFloor);
+            }
+            // TODO: fix jump enabled when touching star
+            touchingDown = true;
           }
-          // TODO: fix jump enabled when touching star
-          touchingDown = true;
         }
       }
     }
 
     var swapBodies = function() {
-        var tempy = secondSkin;
-        secondSkin = firstSkin;
-        firstSkin = tempy;
+      var tempy = secondSkin;
+      secondSkin = firstSkin;
+      firstSkin = tempy;
 
-        tempy = secondObject;
-        secondObject = firstObject;
-        firstObject = tempy;
+      tempy = secondObject;
+      secondObject = firstObject;
+      firstObject = tempy;
 
-        tempy = secondBody;
-        secondBody = firstBody;
-        firstBody = tempy;
+      tempy = secondBody;
+      secondBody = firstBody;
+      firstBody = tempy;
     };
 
     if (secondObject !== null) {
@@ -96,13 +101,14 @@ var B2d = function() {
         var npcBottom = secondSkin.y + secondObject.Ydif;
 
         // difference between sides
-        var margens = [Math.abs(pRightX - npcLeftX), Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
+        var margens = [Math.abs(pRightX - npcLeftX),
+          Math.abs(pLeftX - npcRightX), Math.abs(pBottom - npcTopY), Math.abs(pTopY - npcBottom)];
 
         // index of closest sides at the time of contact
         var side = indexOfSmallest(margens);
 
         // update state based on what side was hit
-        if (side == 0) {
+        if (side === 0) {
           sideHit = 'left';
           playerDamage(firstSkin);
         } else if (side == 1) {
@@ -134,10 +140,12 @@ var B2d = function() {
   var indexOfSmallest = function(a) {
     var lowest = 0;
     for (var i = 1; i < a.length; i++) {
-      if (a[i] < a[lowest]) lowest = i;
+      if (a[i] < a[lowest]) {
+        lowest = i;
+      }
     }
     return lowest;
-  }
+  };
 
   // add the passed body to the array of bodies to remove from the game
   var kill = function(baddy) {
@@ -155,9 +163,9 @@ var B2d = function() {
   };
 
   var addPoint = function(player, point) {
-    var ammount = (point == undefined) ? 10 : point;
+    var ammount = (point === undefined) ? 10 : point;
     points += ammount;
-  }
+  };
 
   // event for when items stop touching
   listener.EndContact = function(contact) {
@@ -170,12 +178,13 @@ var B2d = function() {
         var secondObjectID = null;
         if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
           secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
-          if (secondObjectID !== null) {
+          if (secondObjectID !== null && (secondObjectID !== 'baddy' || firstObjectID !== 'baddy')) {
             // part of a fix alowing the user to touch
             // more then one platform and not lose the
             // ability to jump
             if ((secondObjectID === 'floor' || firstObjectID === 'floor') && (secondObjectID === 'player' || firstObjectID === 'player')) {
               numOfFloor--;
+              console.log(numOfFloor);
               if (numOfFloor <= 0) {
                 touchingFloor = false;
               }
@@ -486,11 +495,11 @@ var B2d = function() {
   var removeActor = function(actor) {
     stage.removeChild(actor.skin);
     actors.splice(actors.indexOf(actor),1);
-  }
+  };
 
   var bodysPrint = function() {
     console.log(actors);
-  }
+  };
 
   return {
     setup: setup,
