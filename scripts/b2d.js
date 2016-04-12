@@ -56,7 +56,6 @@ var B2d = function() {
               (secondObject.id === 'floor' || firstObject.id === 'floor')) {
               touchingFloor = true;
               numOfFloor++;
-              console.log(numOfFloor);
             }
             // TODO: fix jump enabled when touching star
             touchingDown = true;
@@ -116,7 +115,7 @@ var B2d = function() {
         } else if (side == 2) {
           sideHit = 'top';
           kill(secondBody);
-          addPoint(firstSkin, 60);
+          addPoint(firstSkin, 40);
         } else if (side == 3) {
           sideHit = 'bottom';
           playerDamage(firstSkin);
@@ -130,7 +129,7 @@ var B2d = function() {
 
       if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
         kill(secondBody);
-        addPoint(firstBody, 20);
+        addPoint(firstBody, 100);
       }
     }
   };
@@ -154,7 +153,6 @@ var B2d = function() {
   // remove HP from player and handle 0 HP
   var playerDamage = function(player) {
     player.hp--;
-    console.log(player.hp);
     if (player.hp <= 0) {
       kill(bodies[0]);
       playerDead = true;
@@ -183,7 +181,6 @@ var B2d = function() {
             // ability to jump
             if ((secondObjectID === 'floor' || firstObjectID === 'floor') && (secondObjectID === 'player' || firstObjectID === 'player')) {
               numOfFloor--;
-              console.log(numOfFloor);
               if (numOfFloor <= 0) {
                 touchingFloor = false;
               }
@@ -247,6 +244,7 @@ var B2d = function() {
 
   // box2d world setup and boundaries
   var setup = function(platform, spriteId) {
+    console.log('>> phsycs starting');
     world = new b2World(new b2Vec2(0,10), true);
     world.SetContactListener(listener);
     addDebug();
@@ -292,6 +290,7 @@ var B2d = function() {
   // box2d update function. delta time is used to avoid differences in simulation if frame rate drops
   var offset = 0;
   var update = function() {
+    //console.log('updating');
     var now = Date.now();
     var dt = now - lastTimestamp;
     fixedTimestepAccumulator += dt;
@@ -490,9 +489,12 @@ var B2d = function() {
     bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
   };
 
+  var data = null;
+  var dataflag = true;
   var playerData = function() {
 
-    var data = {
+    if (dataflag) {
+      data = {
       pos: {
         x: (playerDead) ? 0 : bodies[0].GetUserData().skin.x,
         y: (playerDead) ? 0 : bodies[0].GetUserData().skin.y
@@ -504,18 +506,53 @@ var B2d = function() {
       sideHit: sideHit,
       points: points
     };
+      if (playerDead) {
+        dataflag = false;
+      }
+    }
 
     return data;
   };
 
   // remove actor and it's skin object
   var removeActor = function(actor) {
+    //if (actors.length > 0) {
+    console.log(actor);
     stage.removeChild(actor.skin);
     actors.splice(actors.indexOf(actor),1);
+    //}
   };
 
   var bodysPrint = function() {
     console.log(actors);
+    console.log(bodies);
+  };
+
+  var clearWorld = function() {
+    setup();
+  };
+
+  var defaults = function() {
+    // important box2d scale and speed vars
+    SCALE = 30;
+    STEP = 20;
+    TIMESTEP = 1 / STEP;
+
+    lastTimestamp = Date.now();
+    fixedTimestepAccumulator = 0;
+    bodiesToRemove = [];
+    actors = [];
+    bodies = [];
+    stars = [];
+    playerDead = false;
+    points = 0;
+
+    // state vars
+    touchingDown = false;
+    touchingFloor = false;
+    sideHit = null;
+    numOfFloor = 0;
+    dataflag = true;
   };
 
   return {
@@ -527,6 +564,8 @@ var B2d = function() {
     movePlayer: movePlayer,
     playerData: playerData,
     platformMake: platformMake,
-    bodysPrint: bodysPrint
+    bodysPrint: bodysPrint,
+    clearWorld: clearWorld,
+    defaults: defaults
   };
 };

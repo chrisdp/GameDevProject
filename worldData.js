@@ -2,7 +2,7 @@ var worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 40,
+          spawnX: 20,
           spawnY: -3000,
           animation: 'dudeIdile',
           id: 'player',
@@ -65,12 +65,21 @@ var worldData = {
           width: 14,
           height: 15
         },
-
+        {
+          spawnX: 2640,
+          spawnY: 466,
+          patOne: 2630,
+          patTwo: 2750,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 14,
+          height: 15
+        },
         {
           spawnX: 2600,
-          spawnY: 466,
+          spawnY: 400,
           patOne: 2600,
-          patTwo: 2750,
+          patTwo: 2700,
           id: 'baddy',
           animation: 'moveLeft',
           width: 14,
@@ -141,15 +150,6 @@ var worldData = {
           restitution: 0,
           animation: 'platform'
         },
-        /*{ // p7
-          spawnX: 1000,
-          spawnY: 300,
-          width: 10,
-          height: 200,
-          id: 'floor',
-          restitution: 0,
-          animation: 'platform'
-        },*/
         { // p7
           spawnX: 1120,
           spawnY: 500,
@@ -173,7 +173,7 @@ var worldData = {
           spawnY: 463,
           width: 10,
           height: 48,
-          id: 'wall',
+          id: 'floor',
           restitution: 0,
           animation: 'platform'
         },
@@ -237,6 +237,33 @@ var worldData = {
           spawnY: 550,
           width: 60,
           height: 50,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p17
+          spawnX: 2300,
+          spawnY: 250,
+          width: 60,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p18
+          spawnX: 2500,
+          spawnY: 175,
+          width: 10,
+          height: 80,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p19
+          spawnX: 2600,
+          spawnY: 450,
+          width: 150,
+          height: 10,
           id: 'floor',
           restitution: 0,
           animation: 'platform'
@@ -379,6 +406,70 @@ var worldData = {
           width: 10,
           height: 10,
           restitution: 0
+        },
+        {
+          spawnX: 55,
+          spawnY: 530,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 15,
+          spawnY: 530,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+
+        {
+          spawnX: 780,
+          spawnY: 130,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 850,
+          spawnY: 130,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 920,
+          spawnY: 130,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 2500,
+          spawnY: 10,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 2600,
+          spawnY: 500,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
         }
       ]
     }

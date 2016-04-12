@@ -10,6 +10,7 @@
 // May 12, 2014
 
 // game variables
+var stuff = null;
 var stage = null;
 var canvas = null;
 var debugCanvas = null;
@@ -17,6 +18,7 @@ var context = null;
 var debugContext = null;
 var sSheet = 'gameAssets';
 var plaformText = [];
+var playing = null;
 // controller vars
 var gamepadConnected = false;
 var controllers = {};
@@ -255,12 +257,26 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       break;
     }
   }
-
+  var shouldUpdate = true;
   function move() {
 
     if (gamepadConnected) {
       var xAxe = controllers[0].axes[0].toFixed(4);
       var yAxe = controllers[0].axes[1].toFixed(4);
+      var A = controllers[0].buttons[0];
+
+      if ((A.pressed) && (!playing)) {
+        //b2d.clearWorld();
+        console.log(playing);
+        stage.removeAllChildren();
+        shouldUpdate = false;
+        //createjs.Ticker.removeEventListener('tick', onTick);
+        onReady();
+        playing = true;
+        shouldUpdate = true;
+
+      }
+
       if ((xAxe < 0.05) && (xAxe > -0.05)) {
         if (dude.currentAnimation !== 'dudeIdile') {
           dude.gotoAndPlay('dudeIdile');
@@ -312,15 +328,21 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       }
     }
   }
-
+  var dontshow = false;
   function onReady(e) {
     console.log('>> setup');
     // kill event listener
+    stuff = true;
+    b2d.defaults();
+    playing = true;
     stage.removeEventListener('onAllAssetsLoaded', onReady);
 
     if (navigator.getGamepads()[0] !== undefined) {
       gamepadConnected = true;
-      addgamepad(navigator.getGamepads()[0]);
+      if (!dontshow) {
+        addgamepad(navigator.getGamepads()[0]);
+      }
+      dontshow = true;
     }
     console.log(navigator.getGamepads());
 
@@ -331,6 +353,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     var temp;
     var newFloor = [];
     var shapes = [];
+    plaformText = [];
     for (var i = 0; i < worldData.levelOne.platforms.length; i++) {
       temp = worldData.levelOne.platforms[i];
       newFloor.push(assetManager.getSprite('gameAssets'));
@@ -343,7 +366,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       shapes[i].graphics.beginFill('#21572f').drawRect(temp.spawnX - temp.width, temp.spawnY - temp.height, temp.width * 2, temp.height * 2);
       // TODO graphcs API for recs
 
-      console.log(temp.height / 12);
       newFloor[i].gotoAndPlay(temp.animation);
       stage.addChild(newFloor[i]);
       stage.addChild(shapes[i]);
@@ -375,6 +397,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
     // add player to the stage
     var playerData = worldData.levelOne.players[0];
+    dude = null;
     dude = assetManager.getSprite(sSheet);
     dude.x = playerData.spawnX;
     dude.y = playerData.spawnY;
@@ -385,6 +408,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
     var baddyData = worldData.levelOne.baddys;
 
+    baddy = [];
     for (i = 0; i < baddyData.length; i++) {
       baddy.push(assetManager.getSprite('gameAssets'));
       baddy[i].x = baddyData[i].spawnX;
@@ -408,6 +432,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       b2d.starMake(stars[i], starData[i]);
     }
 
+    //b2d.defaults();
+
+    txtLeft = null;
     txtLeft = new createjs.Text('', '12px Arial', '#111');
     txtLeft.lineWidth = 550;
     txtLeft.lineHeight = 15;
@@ -416,6 +443,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     txtLeft.y = 50;
     txtLeft.x = 15;
 
+    txtScore = null;
     txtScore = new createjs.Text('', '32px Arial', '#fff');
     txtScore.lineWidth = 550;
     txtScore.lineHeight = 15;
@@ -479,71 +507,77 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
   var txtLeft = null;
   var txtScore = null;
-  var stuff = true;
+
   function onTick(e) {
     // TESTING FPS
+    if (shouldUpdate) {
+      //console.log('ontick');
+      updateStatus();
+      // put your other stuff here!
+      // ...
+      //console.log(debugging);
+      var data = b2d.playerData();
+      if (data.hitPoints <= 0) {
+        playing = false;
+      } else {
+        playing = true;
+      }
+      if (debugging) {
+        stage.addChild(txtLeft);
+        txtLeft.visible = true;
+        txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
+        txtLeft.text += '\nhit points: ' + data.hitPoints;
+        txtLeft.text += '\nscore: ' + data.points;
+        txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
+        txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
+        txtLeft.text += '\nvelocity X: ' + data.vel.x.toFixed(5);
+        txtLeft.text += '\nvelocity Y: ' + data.vel.y.toFixed(5);
+        txtLeft.text += '\non floor: ' + data.touchingFloor;
+        txtLeft.text += '\ncan jump: ' + data.touchingDown;
+        txtLeft.text += '\nside hit: ' + data.sideHit;
+        txtLeft.text += ((gamepadConnected) ? '\nconnected' : '\ndisconnected') + ' :gamepad';
 
-    updateStatus();
-    // put your other stuff here!
-    // ...
-    //console.log(debugging);
-    var data = b2d.playerData();
-    if (debugging) {
-      stage.addChild(txtLeft);
-      txtLeft.visible = true;
-      txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
-      txtLeft.text += '\nhit points: ' + data.hitPoints;
-      txtLeft.text += '\nscore: ' + data.points;
-      txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
-      txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
-      txtLeft.text += '\nvelocity X: ' + data.vel.x.toFixed(5);
-      txtLeft.text += '\nvelocity Y: ' + data.vel.y.toFixed(5);
-      txtLeft.text += '\non floor: ' + data.touchingFloor;
-      txtLeft.text += '\ncan jump: ' + data.touchingDown;
-      txtLeft.text += '\nside hit: ' + data.sideHit;
-      txtLeft.text += ((gamepadConnected) ? '\nconnected' : '\ndisconnected') + ' :gamepad';
-
-      if (platformTextFlag) {
-        for (var i = 0; i < plaformText.length; i++) {
-          stage.addChild(plaformText[i]);
+        if (platformTextFlag) {
+          for (var i = 0; i < plaformText.length; i++) {
+            stage.addChild(plaformText[i]);
+          }
+          platformTextFlag = false;
         }
-        platformTextFlag = false;
-      }
 
-      // Controller Debugger
-      if ($('#controllerDebug:visible').length === 0) {
-        $('#controllerDebug').show();
-      }
-
-    } else {
-      stage.removeChild(txtLeft);
-      txtLeft.visible = false;
-
-      if (platformTextFlag) {
-        for (var i = 0; i < plaformText.length; i++) {
-          stage.removeChild(plaformText[i]);
+        // Controller Debugger
+        if ($('#controllerDebug:visible').length === 0) {
+          $('#controllerDebug').show();
         }
-        platformTextFlag = false;
+
+      } else {
+        stage.removeChild(txtLeft);
+        txtLeft.visible = false;
+
+        if (platformTextFlag) {
+          for (var i = 0; i < plaformText.length; i++) {
+            stage.removeChild(plaformText[i]);
+          }
+          platformTextFlag = false;
+        }
+
+        if ($('#controllerDebug:visible').length === 1) {
+          $('#controllerDebug').hide();
+        }
       }
 
-      if ($('#controllerDebug:visible').length === 1) {
-        $('#controllerDebug').hide();
+      txtScore.text = data.points;
+
+      // update the stage!
+      move();
+      b2d.update();
+      updateCamera(data);
+      stage.update();
+
+      if (stuff) {
+        b2d.bodysPrint();
+        stuff = !stuff;
       }
     }
-
-    txtScore.text = data.points;
-
-    // update the stage!
-    move();
-    b2d.update();
-    updateCamera(data);
-    stage.update();
-
-    if (stuff) {
-      b2d.bodysPrint();
-      stuff = !stuff;
-    }
-
   }
 
 })();
