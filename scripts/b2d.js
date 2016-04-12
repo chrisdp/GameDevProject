@@ -204,6 +204,24 @@ var B2d = function() {
   listener.PreSolve = function(contact, oldManifold) {
     // checks before the actual contact happens
     // can be used for things like oneway platforms
+    if (!playerDead) {
+      // only act on bodies with user data
+      if (contact.GetFixtureA().GetBody().GetUserData() !== null) {
+        // store coliding objects id's
+        var firstObjectID = contact.GetFixtureA().GetBody().GetUserData().id;
+        var secondObjectID = null;
+        if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
+          secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
+          if (secondObjectID !== null) {
+            if ((secondObjectID === 'star') && (firstObjectID === 'player')) {
+              contact.SetEnabled(false);
+            } else if ((secondObjectID === 'player') && (firstObjectID === 'star')) {
+              contact.SetEnabled(false);
+            }
+          }
+        }
+      }
+    }
   };
 
   // used to construct a static body for platforms
