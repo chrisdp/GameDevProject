@@ -330,6 +330,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
     var temp;
     var newFloor = [];
+    var shapes = [];
     for (var i = 0; i < worldData.levelOne.platforms.length; i++) {
       temp = worldData.levelOne.platforms[i];
       newFloor.push(assetManager.getSprite('gameAssets'));
@@ -337,11 +338,15 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       newFloor[i].y = temp.spawnY;
       newFloor[i].scaleX = temp.width / 200;
       newFloor[i].scaleY = temp.height / 12;
+      newFloor[i].visible = false;
+      shapes.push(new createjs.Shape());
+      shapes[i].graphics.beginFill('#21572f').drawRect(temp.spawnX - temp.width, temp.spawnY - temp.height, temp.width * 2, temp.height * 2);
       // TODO graphcs API for recs
 
       console.log(temp.height / 12);
       newFloor[i].gotoAndPlay(temp.animation);
       stage.addChild(newFloor[i]);
+      stage.addChild(shapes[i]);
       b2d.platformMake(newFloor[i], temp);
       plaformText.push(new createjs.Text('', '12px Arial', '#111'));
       plaformText[i].lineWidth = 550;
@@ -460,7 +465,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
     HP = [];
 
-
     for (i = 0; i < playerData.hitPoints; i++) {
       HPOffset -= 35;
       HP[i] = assetManager.getSprite(sSheet);
@@ -483,7 +487,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     // put your other stuff here!
     // ...
     //console.log(debugging);
-    var data = b2d.playerData()
+    var data = b2d.playerData();
     if (debugging) {
       stage.addChild(txtLeft);
       txtLeft.visible = true;
