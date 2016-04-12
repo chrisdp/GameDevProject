@@ -52,7 +52,6 @@ var B2d = function() {
       if (secondObject.id !== null) {
         if (secondObject.id !== 'star' && firstObject.id !== 'star') {
           if (secondObject.id !== 'baddy' && firstObject.id !== 'baddy') {
-
             if ((secondObject.id === 'floor' || firstObject.id === 'floor') &&
               (secondObject.id === 'floor' || firstObject.id === 'floor')) {
               touchingFloor = true;
