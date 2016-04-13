@@ -11,8 +11,16 @@ var worldData = {
           hp: 5,
           points: 0
         }
-
       ],
+      ship:
+        {
+          spawnX: 3450,
+          spawnY: 300,
+          animation: 'rocket',
+          id: 'ship',
+          width: 1,
+          height: 30
+        },
       baddys: [
         {
           spawnX: 300,
@@ -100,6 +108,16 @@ var worldData = {
           spawnY: 150,
           patOne: 1515,
           patTwo: 1680,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 12,
+          height: 13
+        },
+        {
+          spawnX: 3350,
+          spawnY: 150,
+          patOne: 3215,
+          patTwo: 3400,
           id: 'baddy',
           animation: 'moveLeft',
           width: 12,

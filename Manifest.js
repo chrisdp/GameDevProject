@@ -8,6 +8,14 @@ var manifest = [
     id: 'gameAssets'
   },
   {
+    src: 'lib/screens.json',
+    forSpritesheet: 'screens'
+  },
+  {
+    src: 'lib/screens.png',
+    id: 'screens'
+  },
+  {
     src: 'sounds/baddydeath.ogg',
     id: 'baddydeath',
     data: 4

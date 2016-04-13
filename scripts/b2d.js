@@ -29,6 +29,7 @@ var B2d = function() {
   var stars = [];
   var playerDead = false;
   var points = 0;
+  var ship = null;
 
   // state vars
   var touchingDown = false;
@@ -53,7 +54,7 @@ var B2d = function() {
         if (secondObject.id !== 'star' && firstObject.id !== 'star') {
           if (secondObject.id !== 'baddy' && firstObject.id !== 'baddy') {
             if ((secondObject.id === 'floor' || firstObject.id === 'floor') &&
-              (secondObject.id === 'floor' || firstObject.id === 'floor')) {
+              (secondObject.id === 'player' || firstObject.id === 'player')) {
               touchingFloor = true;
               numOfFloor++;
             }
@@ -133,7 +134,28 @@ var B2d = function() {
         addPoint(firstBody, 100);
         createjs.Sound.play('point');
       }
+
+      // checking for end of level
+      if ((firstObject.id === 'ship') && (secondObject.id === 'player')) {
+        swapBodies();
+      }
+
+      if ((firstObject.id === 'player') && (secondObject.id === 'ship')) {
+        console.log(bodies[0].GetUserData());
+        firstObject.skin.visible = false;
+        //ship = secondObject.skin;
+        stopPlayer();
+        ship.gotoAndPlay('rocketStart');
+        ship.addEventListener('animationend', flyShip);
+        ship.endOfLevel = true;
+      }
     }
+  };
+
+  var flyShip = function() {
+    ship.removeEventListener('animationend', flyShip);
+    ship.fly = true;
+    console.log('start moving');
   };
 
   // returns the index of the smallest value in the array
@@ -170,8 +192,7 @@ var B2d = function() {
         forceX = 100;
         forceY = -100;
       }
-      bodies[0].SetLinearVelocity(new b2Vec2(0,0));
-      bodies[0].SetAngularVelocity(0);
+      stopPlayer();
       bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
     }
   };
@@ -192,7 +213,8 @@ var B2d = function() {
         var secondObjectID = null;
         if (contact.GetFixtureB().GetBody().GetUserData() !== null) {
           secondObjectID = contact.GetFixtureB().GetBody().GetUserData().id;
-          if (secondObjectID !== null && (secondObjectID !== 'baddy' || firstObjectID !== 'baddy')) {
+          if (secondObjectID !== null && (secondObjectID !== 'baddy' || firstObjectID !== 'baddy') &&
+          (secondObjectID !== 'ship' || firstObjectID !== 'ship')) {
             // part of a fix alowing the user to touch
             // more then one platform and not lose the
             // ability to jump
@@ -230,6 +252,10 @@ var B2d = function() {
             if ((secondObjectID === 'star') && (firstObjectID === 'player')) {
               contact.SetEnabled(false);
             } else if ((secondObjectID === 'player') && (firstObjectID === 'star')) {
+              contact.SetEnabled(false);
+            } else if ((secondObjectID === 'ship') && (firstObjectID === 'player')) {
+              contact.SetEnabled(false);
+            } else if ((secondObjectID === 'player') && (firstObjectID === 'ship')) {
               contact.SetEnabled(false);
             }
           }
@@ -321,9 +347,13 @@ var B2d = function() {
         world.DestroyBody(bodiesToRemove[i]);
       }
       bodiesToRemove = [];
-
+      var forceX;
+      var forceY;
+      var move;
       for (i = 0; i < actors.length; i++) {
-        var force = 0;
+        forceX = 0;
+        forceY = 0;
+        move = false;
         var vel = actors[i].body.GetLinearVelocity();
         if (actors[i].id === 'baddy') {
           if (actors[i].skin.direction) {
@@ -333,7 +363,8 @@ var B2d = function() {
                 actors[i].skin.gotoAndPlay('moveLeft');
               }
               if (vel.x > -1) {
-                force = -3;
+                forceX = -3;
+                move = true;
               }
             } else {
               actors[i].skin.direction = false;
@@ -347,13 +378,26 @@ var B2d = function() {
               }
               if (vel.x < 1) {
                 //console.log('changed force');
-                force = 3;
+                forceX = 3;
+                move = true;
               }
             } else {
               actors[i].skin.direction = true;
             }
           }
-          actors[i].body.ApplyForce(new b2Vec2(force, 0), actors[i].body.GetWorldCenter());
+        }
+        if (actors[i].id === 'ship') {
+          //console.log(actors[i]);
+          if (ship.fly) {
+            console.log('fly!');
+            if (vel.y > -2) {
+              forceY = -3;
+              move = true;
+            }
+          }
+        }
+        if (move) {
+          actors[i].body.ApplyForce(new b2Vec2(forceX, forceY), actors[i].body.GetWorldCenter());
         }
       }
 
@@ -531,6 +575,7 @@ var B2d = function() {
   var playerData = function() {
 
     if (dataflag) {
+      //console.log(ship);
       data = {
       pos: {
         x: (playerDead) ? 0 : bodies[0].GetUserData().skin.x,
@@ -541,7 +586,8 @@ var B2d = function() {
       touchingDown: touchingDown,
       touchingFloor: touchingFloor,
       sideHit: sideHit,
-      points: points
+      points: points,
+      endOfLevel: ship.endOfLevel
     };
       if (playerDead) {
         dataflag = false;
@@ -567,6 +613,8 @@ var B2d = function() {
       if (bodies[i].GetUserData().id === 'baddy') {
         bodies[i].m_mass = 5;
         bodies[i].m_invMass = 5;
+      } else if (bodies[i].GetUserData().id === 'ship') {
+        ship = bodies[i].GetUserData().skin;
       }
     }
     console.log(bodies);
@@ -574,6 +622,11 @@ var B2d = function() {
 
   var clearWorld = function() {
     setup();
+  };
+
+  var stopPlayer = function() {
+    bodies[0].SetLinearVelocity(new b2Vec2(0,0));
+    bodies[0].SetAngularVelocity(0);
   };
 
   var defaults = function() {
@@ -616,6 +669,7 @@ var B2d = function() {
     bodysPrint: bodysPrint,
     clearWorld: clearWorld,
     defaults: defaults,
-    playerMass: playerMass
+    playerMass: playerMass,
+    stopPlayer: stopPlayer
   };
 };

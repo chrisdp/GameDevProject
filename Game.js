@@ -19,6 +19,7 @@ var debugContext = null;
 var sSheet = 'gameAssets';
 var plaformText = [];
 var playing = null;
+
 // controller vars
 var gamepadConnected = false;
 var controllers = {};
@@ -134,6 +135,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   var assetManager = null;
   var backdrop = null;
   var dude = null;
+  var ship = null;
   var baddy = [];
   var platform = null;
   var floor = null;
@@ -191,7 +193,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     b2d = new B2d();
     // construct preloader object to load spritesheet and sound assets
     assetManager = new AssetManager(stage);
-    stage.addEventListener('onAllAssetsLoaded', onReady);
+    stage.addEventListener('onAllAssetsLoaded', titleScreen);
 
     // load the assets
     assetManager.loadAssets(manifest);
@@ -199,6 +201,102 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     //keyboard handlers
     window.onkeyup = keyUpHandler;
     window.onkeydown = keyDownHandler;
+  }
+
+  var button = null;
+  var shouldStart = null;
+  function titleScreen(e) {
+    stage.removeEventListener('onAllAssetsLoaded',titleScreen);
+    canvas.style.backgroundColor = '#000000';
+    var title = assetManager.getSprite('screens');
+    title.gotoAndPlay('titleScreen');
+    title.x = canvas.width / 4.8;
+    button = assetManager.getSprite('screens');
+    button.gotoAndPlay('btnStart');
+    button.scaleX = 0.8;
+    button.scaleY = 0.8;
+    button.x = title.x + 165;
+    button.y = title.y + 480;
+    button.on('mousedown', function() {
+      startDown();
+    });
+    button.on('mouseup', function() {
+      startUp();
+    });
+    button.on('click', function() {
+      startClick();
+    });
+
+    shouldStart = true;
+
+    if (navigator.getGamepads()[0] !== undefined) {
+      gamepadConnected = true;
+      if (!dontshow) {
+        addgamepad(navigator.getGamepads()[0]);
+      }
+      dontshow = true;
+    }
+    console.log(navigator.getGamepads());
+
+    stage.addChild(button,title);
+    stage.update();
+
+    createjs.Ticker.addEventListener('tick', splashUpdate);
+  }
+
+  function splashUpdate() {
+    if (gamepadConnected) {
+      updateStatus();
+      if (controllers[0].buttons[0].pressed) {
+        if (shouldStart) {
+          startWithController();
+          shouldStart = false;
+        }
+      }
+    }
+    stage.update();
+  }
+
+  function startWithController() {
+    setTimeout(startDown, 100);
+    setTimeout(startUp, 200);
+    setTimeout(startClick, 300);
+  }
+
+  function startDown() {
+    button.gotoAndPlay('btnStart_clicked');
+    stage.update();
+  }
+
+  function startUp() {
+    button.gotoAndPlay('btnStart');
+    stage.update();
+  }
+
+  function startClick() {
+    stage.removeAllChildren();
+    createjs.Ticker.removeEventListener('tick', splashUpdate);
+    onReady();
+  }
+
+  var title = null;
+  function gameOverScreen(e) {
+    //NOTE: Clean up stage first, you may need to 'stage.removeAllChildren() before this proceeds
+    console.log('not every frame!');
+    stage.removeEventListener('onAllAssetsLoaded',titleScreen);
+    title = assetManager.getSprite('screens');
+    title.gotoAndPlay('gameOver');
+    title.x = canvas.width / 4.8;
+    stage.addChild(title);
+    canvas.addEventListener('click', restart);
+    stage.update();
+  }
+
+  function restart() {
+    canvas.removeEventListener('click', restart);
+    stage.removeChild(title);
+    stage.update();
+    onReady();
   }
 
   function setupCanvas() {
@@ -266,86 +364,110 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     }
   }
   var shouldUpdate = true;
+  var loadGameOver = true;
   function move() {
 
+    if (!playing) {
+      if (loadGameOver) {
+        //console.log(data.hp);
+        if (data.hitPoints > 0) {
+
+        } else {
+          gameOverScreen();
+          shouldStart = true;
+          loadGameOver = false;
+        }
+      }
+    } else {
+      loadGameOver = true;
+    }
     if (gamepadConnected) {
       var xAxe = controllers[0].axes[0].toFixed(4);
       var yAxe = controllers[0].axes[1].toFixed(4);
       var start = controllers[0].buttons[9];
+      //console.log((start.pressed) + ' ' + (!playing) + ' ' + (shouldStart));
+      if (!playing) {
 
-      if ((start.pressed) && (!playing)) {
-        //b2d.clearWorld();
-        console.log(playing);
-        stage.removeAllChildren();
-        createjs.Sound.stop('melody');
-        shouldUpdate = false;
-        //createjs.Ticker.removeEventListener('tick', onTick);
-        onReady();
-        playing = true;
-        shouldUpdate = true;
+        if ((start.pressed) && (shouldStart)) {
+          //b2d.clearWorld();
+          shouldStart = false;
+          console.log(playing);
+          stage.removeAllChildren();
+          createjs.Sound.stop('melody');
+          shouldUpdate = false;
+          //createjs.Ticker.removeEventListener('tick', onTick);
+          //titleScreen();
+          $('canvas').trigger('click');
+          playing = true;
+          shouldUpdate = true;
 
-      }
-
-      if ((xAxe < 0.05) && (xAxe > -0.05)) {
-        if (dude.currentAnimation !== 'dudeIdile') {
-          dude.gotoAndPlay('dudeIdile');
         }
-      }
+      } else {
 
-      if (xAxe > 0.25) {
-        if (dude.currentAnimation !== 'dudeMoveRight') {
-          dude.gotoAndPlay('dudeMoveRight');
+        if ((xAxe < 0.05) && (xAxe > -0.05)) {
+          if (dude.currentAnimation !== 'dudeIdile') {
+            dude.gotoAndPlay('dudeIdile');
+          }
         }
-        b2d.movePlayer('right', (xAxe * 4));
-      }
 
-      if (xAxe < -0.25) {
-        if (dude.currentAnimation !== 'dudeMoveLeft') {
-          dude.gotoAndPlay('dudeMoveLeft');
+        if (xAxe > 0.25) {
+          if (dude.currentAnimation !== 'dudeMoveRight') {
+            dude.gotoAndPlay('dudeMoveRight');
+          }
+          b2d.movePlayer('right', (xAxe * 4));
         }
-        b2d.movePlayer('left', (xAxe * 4));
-      }
 
-      if (yAxe > 0.80) {
-        b2d.movePlayer('down');
-      }
+        if (xAxe < -0.25) {
+          if (dude.currentAnimation !== 'dudeMoveLeft') {
+            dude.gotoAndPlay('dudeMoveLeft');
+          }
+          b2d.movePlayer('left', (xAxe * 4));
+        }
 
-      if (controllers[0].buttons[0].pressed) {
-        b2d.movePlayer('up');
+        if (yAxe > 0.80) {
+          b2d.movePlayer('down');
+        }
+
+        if (controllers[0].buttons[0].pressed) {
+          b2d.movePlayer('up');
+        }
       }
     } else {
-      if ((enter) && (!playing)) {
-        //b2d.clearWorld();
-        console.log(playing);
-        stage.removeAllChildren();
-        createjs.Sound.stop('melody');
-        shouldUpdate = false;
-        //createjs.Ticker.removeEventListener('tick', onTick);
-        onReady();
-        playing = true;
-        shouldUpdate = true;
+      if (!playing) {
+        if ((enter) && (!playing)) {
+          //b2d.clearWorld();
+          console.log(playing);
+          stage.removeAllChildren();
+          createjs.Sound.stop('melody');
+          shouldUpdate = false;
+          //createjs.Ticker.removeEventListener('tick', onTick);
+          onReady();
+          playing = true;
+          shouldUpdate = true;
 
-      }
+        }
+      } else {
 
-      if ((!leftArrow) && (!rightArrow)) {
-        dude.gotoAndPlay('dudeIdile');
-      }
+        if ((!leftArrow) && (!rightArrow)) {
+          dude.gotoAndPlay('dudeIdile');
+        }
 
-      if (leftArrow) {
-        b2d.movePlayer('left');
-      }
+        if (leftArrow) {
+          b2d.movePlayer('left');
+        }
 
-      if (rightArrow) {
-        b2d.movePlayer('right');
-      }
+        if (rightArrow) {
+          b2d.movePlayer('right');
+        }
 
-      if (upArrow) {
-        b2d.movePlayer('up');
-        //upArrow = false;
-      }
+        if (upArrow) {
+          b2d.movePlayer('up');
+          //upArrow = false;
+        }
 
-      if (downArrow) {
-        b2d.movePlayer('down');
+        if (downArrow) {
+          b2d.movePlayer('down');
+        }
       }
     }
   }
@@ -356,18 +478,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     stuff = true;
     b2d.defaults();
     playing = true;
-    stage.removeEventListener('onAllAssetsLoaded', onReady);
-
-    if (navigator.getGamepads()[0] !== undefined) {
-      gamepadConnected = true;
-      if (!dontshow) {
-        addgamepad(navigator.getGamepads()[0]);
-      }
-      dontshow = true;
-    }
-    console.log(navigator.getGamepads());
-
-    // setup sprite to act as a floor skin
+    title = null;
+    //stage.removeEventListener('onAllAssetsLoaded', onReady);
 
     b2d.setup();
 
@@ -442,6 +554,19 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       b2d.spriteMake(baddy[i], baddyData[i]);
     }
 
+    var shipData = worldData.levelOne.ship;
+    ship = null;
+    ship = assetManager.getSprite(sSheet);
+    ship.x = shipData.spawnX;
+    ship.y = shipData.spawnY;
+    ship.scaleY = 2;
+    ship.scaleX = 2;
+    ship.endOfLevel = false;
+    ship.fly = false;
+    ship.gotoAndPlay(shipData.animation);
+    stage.addChild(ship);
+    b2d.spriteMake(ship, shipData);
+
     var starData = worldData.levelOne.stars;
     var stars = [];
     for (i = 0; i < starData.length; i++) {
@@ -480,6 +605,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
     stage.addChild(txtScoreOutline, txtScore);
 
+    b2d.bodysPrint();
+
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addEventListener('tick', onTick);
@@ -496,21 +623,31 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     //hpContainer.x = 50;
     //hpContainer.y = 50;
     location = dude.x;
+    //console.log(title);
 
     offset = (location + debugContext.canvas.width / 2) - 900;
     if (offset > 0 && offset < 2680) {
+      if (title !== null) {
+        title.x = offset + 168;
+      }
       HPOffset = location + 460;
       stage.setTransform(-offset);
       txtLeft.x = location - 435;
       txtScore.x = location + 435;
       txtScoreOutline.x = location + 435;
     } else if (offset > 2680) {
+      if (title !== null) {
+        title.x = 2680 + 168;
+      }
       HPOffset = 3590;
       stage.setTransform(-2680);
       txtLeft.x = 2695;
       txtScore.x = 3565;
       txtScoreOutline.x = 3565;
     } else {
+      if (title !== null) {
+        title.x = 168;
+      }
       HPOffset = 910;
       stage.setTransform(0);
       txtLeft.x = 15;
@@ -539,6 +676,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   var txtLeft = null;
   var txtScore = null;
   var txtScoreOutline = null;
+  var data = null;
 
   function onTick(e) {
     // TESTING FPS
@@ -548,8 +686,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       // put your other stuff here!
       // ...
       //console.log(debugging);
-      var data = b2d.playerData();
-      if (data.hitPoints <= 0) {
+      data = b2d.playerData();
+      if ((data.hitPoints <= 0) || (data.endOfLevel)) {
         playing = false;
       } else {
         playing = true;
@@ -559,6 +697,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
         txtLeft.visible = true;
         txtLeft.text = 'fps: ' +  createjs.Ticker.getMeasuredFPS();
         txtLeft.text += '\nhit points: ' + data.hitPoints;
+        txtLeft.text += '\nend of level: ' + data.endOfLevel;
         txtLeft.text += '\nscore: ' + data.points;
         txtLeft.text += '\nX: ' + data.pos.x.toFixed(5);
         txtLeft.text += '\nY: ' + data.pos.y.toFixed(5);
@@ -605,11 +744,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       b2d.update();
       updateCamera(data);
       stage.update();
-
-      if (stuff) {
-        b2d.bodysPrint();
-        stuff = !stuff;
-      }
     }
   }
 
