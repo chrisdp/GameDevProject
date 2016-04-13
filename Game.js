@@ -4,6 +4,7 @@
 /* global AssetManager */
 /* global manifest */
 /* global worldData */
+/* global e */
 
 // AssetManager Demo
 // Sean Morrow
@@ -53,8 +54,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     d.appendChild(t);
     var b = document.createElement('div');
     b.className = 'controller-buttons';
+    var e;
     for (var i = 0; i < gamepad.buttons.length; i++) {
-      var e = document.createElement('span');
+      e = document.createElement('span');
       e.className = 'controller-button';
       e.innerHTML = buttonNames[i];
       b.appendChild(e);
@@ -101,7 +103,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       }
 
       var axes = d.getElementsByClassName('axis');
-      for (var i = 0; i < controller.axes.length; i++) {
+      for (i = 0; i < controller.axes.length; i++) {
         var a = axes[i];
         a.innerHTML = i + ': ' + controller.axes[i].toFixed(4);
         a.setAttribute('value', controller.axes[i] + 1);
@@ -540,7 +542,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       newFloor[i].scaleY = temp.height / 12;
       newFloor[i].visible = false;
       shapes.push(new createjs.Shape());
-      shapes[i].graphics.beginFill('#21572f').drawRect(temp.spawnX - temp.width, temp.spawnY - temp.height, temp.width * 2, temp.height * 2);
+      shapes[i].graphics.beginFill('#21572f')
+      .drawRect(temp.spawnX - temp.width, temp.spawnY - temp.height, temp.width * 2, temp.height * 2);
       // TODO graphcs API for recs
 
       newFloor[i].gotoAndPlay(temp.animation);
