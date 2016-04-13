@@ -336,6 +336,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     console.log(playing);
     createjs.Sound.stop('melody');
     stage.removeAllChildren();
+
     onReady();
   }
 
@@ -448,18 +449,21 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       if (!playing) {
 
         if ((start.pressed) && (shouldStart)) {
-          //b2d.clearWorld();
-          shouldStart = false;
-          console.log(playing);
-          createjs.Sound.stop('melody');
-          stage.removeAllChildren();
-          shouldUpdate = false;
-          //createjs.Ticker.removeEventListener('tick', onTick);
-          //titleScreen();
-          $('canvas').trigger('click');
-          playing = true;
-          shouldUpdate = true;
-
+          if (data.endOfLevel) {
+            resetClick();
+          } else {
+            //b2d.clearWorld();
+            shouldStart = false;
+            console.log(playing);
+            createjs.Sound.stop('melody');
+            stage.removeAllChildren();
+            shouldUpdate = false;
+            //createjs.Ticker.removeEventListener('tick', onTick);
+            //titleScreen();
+            $('canvas').trigger('click');
+            playing = true;
+            shouldUpdate = true;
+          }
         }
       } else {
 
@@ -494,16 +498,21 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     } else {
       if (!playing) {
         if ((enter) && (!playing)) {
-          shouldStart = false;
-          console.log(playing);
-          createjs.Sound.stop('melody');
-          stage.removeAllChildren();
-          shouldUpdate = false;
-          //createjs.Ticker.removeEventListener('tick', onTick);
-          //titleScreen();
-          $('canvas').trigger('click');
-          playing = true;
-          shouldUpdate = true;
+          if (data.endOfLevel) {
+            resetClick();
+          } else {
+            //b2d.clearWorld();
+            shouldStart = false;
+            console.log(playing);
+            createjs.Sound.stop('melody');
+            stage.removeAllChildren();
+            shouldUpdate = false;
+            //createjs.Ticker.removeEventListener('tick', onTick);
+            //titleScreen();
+            $('canvas').trigger('click');
+            playing = true;
+            shouldUpdate = true;
+          }
         }
       } else {
 
