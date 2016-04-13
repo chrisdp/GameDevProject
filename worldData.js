@@ -2,12 +2,12 @@ var worldData = {
     levelOne: {
       players: [
         {
-          spawnX: 20,
-          spawnY: -3000,
+          spawnX: 30,
+          spawnY: 300,
           animation: 'dudeIdile',
           id: 'player',
-          width: 14,
-          height: 23,
+          width: 9,
+          height: 21,
           hp: 10,
           points: 0
         }
@@ -21,8 +21,8 @@ var worldData = {
           patTwo: 520,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         {
           spawnX: 500,
@@ -31,18 +31,18 @@ var worldData = {
           patTwo: 1000,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         {
           spawnX: 1088,
           spawnY: 466,
-          patOne: 1025,
-          patTwo: 1185,
+          patOne: 1005,
+          patTwo: 1100,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         // pit baddys
         {
@@ -52,8 +52,8 @@ var worldData = {
           patTwo: 2440,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         {
           spawnX: 2500,
@@ -62,8 +62,8 @@ var worldData = {
           patTwo: 2570,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         {
           spawnX: 2640,
@@ -72,8 +72,8 @@ var worldData = {
           patTwo: 2750,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         },
         {
           spawnX: 2600,
@@ -82,8 +82,8 @@ var worldData = {
           patTwo: 2700,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 14,
-          height: 15
+          width: 12,
+          height: 13
         }
       ],
       platforms: [
@@ -470,7 +470,61 @@ var worldData = {
           width: 10,
           height: 10,
           restitution: 1
-        }
+        },
+        {
+          spawnX: 1130,
+          spawnY: 460,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1155,
+          spawnY: 462,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1180,
+          spawnY: 464,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1205,
+          spawnY: 462,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1230,
+          spawnY: 460,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1255,
+          spawnY: 462,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
       ]
     }
   };

@@ -115,6 +115,7 @@ var B2d = function() {
         } else if (side == 2) {
           sideHit = 'top';
           kill(secondBody);
+          createjs.Sound.play('baddydeath');
           addPoint(firstSkin, 40);
         } else if (side == 3) {
           sideHit = 'bottom';
@@ -130,6 +131,7 @@ var B2d = function() {
       if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
         kill(secondBody);
         addPoint(firstBody, 100);
+        createjs.Sound.play('point');
       }
     }
   };
@@ -153,9 +155,11 @@ var B2d = function() {
   // remove HP from player and handle 0 HP
   var playerDamage = function(player) {
     player.hp--;
+    createjs.Sound.play('playerdamage');
     if (player.hp <= 0) {
       kill(bodies[0]);
       playerDead = true;
+      createjs.Sound.play('gameover1');
     } else {
       var forceX = 0;
       var forceY = 0;
@@ -282,7 +286,6 @@ var B2d = function() {
     rightBodyDef.position.y = 300 / SCALE;
     var right = world.CreateBody(rightBodyDef);
     right.CreateFixture(rightFixture);
-
   };
 
   // box2d debugger
@@ -466,6 +469,7 @@ var B2d = function() {
     return sprite;
   };
 
+  var canRunSound = null;
   var movePlayer = function(where, speed) {
     //var player = bodies[0].GetUserData();
     var vel = bodies[0].GetLinearVelocity();
@@ -493,7 +497,9 @@ var B2d = function() {
     case 'up':
       if ((touchingDown) && (vel.y > -3)) {
         forceY = -250;
-        if (vel.y > -3) {
+        console.log(numOfFloor);
+        createjs.Sound.play('jump');
+        if (vel.y < -3) {
           touchingDown = false;
         }
       }
@@ -503,6 +509,21 @@ var B2d = function() {
       break;
     }
     bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
+    /*
+        if ((vel.x !== 0) && (touchingDown) && (vel.y === 0)) {
+          console.log(vel.x + ' ' + touchingDown + ' ' + vel.y);
+          if (canRunSound) {
+            createjs.Sound.play('running', {loop: -1});
+            canRunSound = false;
+          }
+        } else {
+          if (!canRunSound) {
+            console.log('stop that?');
+            createjs.Sound.stop('running');
+            canRunSound = true;
+          }
+        }
+        */
   };
 
   var data = null;
@@ -571,6 +592,11 @@ var B2d = function() {
     dataflag = true;
   };
 
+  var playerMass = function(mass, iMass) {
+    bodies[0].m_mass = mass;
+    bodies[0].m_invMass = iMass;
+  };
+
   return {
     setup: setup,
     addDebug: addDebug,
@@ -582,6 +608,7 @@ var B2d = function() {
     platformMake: platformMake,
     bodysPrint: bodysPrint,
     clearWorld: clearWorld,
-    defaults: defaults
+    defaults: defaults,
+    playerMass: playerMass
   };
 };

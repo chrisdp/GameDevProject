@@ -147,12 +147,14 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   var KEYCODE_RIGHT = 39;
   var KEYCODE_UP = 38;
   var KEYCODE_DOWN = 40;
+  var KEYCODE_ENTER = 13;
 
   // current inputs
   var leftArrow = false;
   var rightArrow = false;
   var upArrow = false;
   var downArrow = false;
+  var enter = false;
 
   // ------------------------------------------------------------ show the debugger
   var debugging;
@@ -238,6 +240,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     case KEYCODE_DOWN:
       downArrow = true;
       break;
+    case KEYCODE_ENTER:
+      enter = true;
+      break;
     }
   }
 
@@ -255,6 +260,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     case KEYCODE_DOWN:
       downArrow = false;
       break;
+    case KEYCODE_ENTER:
+      enter = false;
+      break;
     }
   }
   var shouldUpdate = true;
@@ -263,12 +271,13 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     if (gamepadConnected) {
       var xAxe = controllers[0].axes[0].toFixed(4);
       var yAxe = controllers[0].axes[1].toFixed(4);
-      var A = controllers[0].buttons[0];
+      var start = controllers[0].buttons[9];
 
-      if ((A.pressed) && (!playing)) {
+      if ((start.pressed) && (!playing)) {
         //b2d.clearWorld();
         console.log(playing);
         stage.removeAllChildren();
+        createjs.Sound.stop('melody');
         shouldUpdate = false;
         //createjs.Ticker.removeEventListener('tick', onTick);
         onReady();
@@ -305,6 +314,18 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
         b2d.movePlayer('up');
       }
     } else {
+      if ((enter) && (!playing)) {
+        //b2d.clearWorld();
+        console.log(playing);
+        stage.removeAllChildren();
+        createjs.Sound.stop('melody');
+        shouldUpdate = false;
+        //createjs.Ticker.removeEventListener('tick', onTick);
+        onReady();
+        playing = true;
+        shouldUpdate = true;
+
+      }
 
       if ((!leftArrow) && (!rightArrow)) {
         dude.gotoAndPlay('dudeIdile');
@@ -378,7 +399,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       plaformText[i].x = temp.spawnX;
       plaformText[i].y = temp.spawnY - 30;
       plaformText[i].text = 'Platform: ' + i;
-
       //console.log(newFloor[i]);
     }
 
@@ -405,6 +425,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     dude.gotoAndPlay(playerData.animation);
     stage.addChild(dude);
     b2d.spriteMake(dude, playerData);
+    b2d.playerMass(1.4311111111111112, 0.6987577639751552);
 
     var baddyData = worldData.levelOne.baddys;
 
@@ -462,6 +483,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addEventListener('tick', onTick);
+    createjs.Sound.play('melody', {loop: -1});
   }
 
   var location = null;

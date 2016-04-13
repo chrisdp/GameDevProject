@@ -51,6 +51,11 @@ var manifest = [
     src: 'sounds/epicbattle.ogg',
     id: 'epicwin',
     data: 4
+  },
+  {
+    src: 'sounds/melody.ogg',
+    id: 'melody',
+    data: 4
   }
 
   /**
