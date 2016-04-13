@@ -208,6 +208,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   function titleScreen(e) {
     stage.removeEventListener('onAllAssetsLoaded',titleScreen);
     canvas.style.backgroundColor = '#000000';
+    createjs.Sound.play('epicwin', {loop: -1});
     var title = assetManager.getSprite('screens');
     title.gotoAndPlay('titleScreen');
     title.x = canvas.width / 4.8;
@@ -274,6 +275,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   }
 
   function startClick() {
+    createjs.Sound.stop('epicwin');
     stage.removeAllChildren();
     createjs.Ticker.removeEventListener('tick', splashUpdate);
     onReady();
