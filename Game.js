@@ -332,13 +332,25 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   }
 
   function resetClick() {
-    stage.removeAllChildren();
+    shouldStart = false;
+    console.log(playing);
     createjs.Sound.stop('melody');
+    stage.removeAllChildren();
     onReady();
   }
 
   function restart() {
+    //b2d.clearWorld();
     canvas.removeEventListener('click', restart);
+    shouldStart = false;
+    console.log(playing);
+    createjs.Sound.stop('melody');
+    stage.removeAllChildren();
+    shouldUpdate = false;
+    //createjs.Ticker.removeEventListener('tick', onTick);
+    //titleScreen();
+    playing = true;
+    shouldUpdate = true;
     stage.removeChild(title);
     stage.update();
     onReady();
@@ -482,13 +494,14 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     } else {
       if (!playing) {
         if ((enter) && (!playing)) {
-          //b2d.clearWorld();
+          shouldStart = false;
           console.log(playing);
-          stage.removeAllChildren();
           createjs.Sound.stop('melody');
+          stage.removeAllChildren();
           shouldUpdate = false;
           //createjs.Ticker.removeEventListener('tick', onTick);
-          onReady();
+          //titleScreen();
+          $('canvas').trigger('click');
           playing = true;
           shouldUpdate = true;
         }
