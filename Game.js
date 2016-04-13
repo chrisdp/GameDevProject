@@ -292,6 +292,47 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     stage.update();
   }
 
+  function winScreen(e) {
+    stage.removeEventListener('onAllAssetsLoaded',titleScreen);
+    canvas.style.backgroundColor = '#000000';
+    var title = assetManager.getSprite('screens');
+    title.gotoAndPlay('winScreen');
+    title.x = 2680 + 168;
+    button = assetManager.getSprite('screens');
+    button.gotoAndPlay('btnRestart');
+    button.scaleX = 0.8;
+    button.scaleY = 0.8;
+    button.x = title.x + 165;
+    button.y = title.y + 480;
+    button.on('mousedown', function() {
+      resetDown();
+    });
+    button.on('mouseup', function() {
+      resetUp();
+    });
+    button.on('click', function() {
+      resetClick();
+    });
+    stage.addChild(button,title);
+    stage.update();
+  }
+
+  function resetDown() {
+    button.gotoAndPlay('btnRestart_clicked');
+    stage.update();
+  }
+
+  function resetUp() {
+    button.gotoAndPlay('btnRestart');
+    stage.update();
+  }
+
+  function resetClick() {
+    stage.removeAllChildren();
+    createjs.Sound.stop('melody');
+    onReady();
+  }
+
   function restart() {
     canvas.removeEventListener('click', restart);
     stage.removeChild(title);
@@ -371,7 +412,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       if (loadGameOver) {
         //console.log(data.hp);
         if (data.hitPoints > 0) {
-
+          winScreen();
+          shouldStart = true;
+          loadGameOver = false;
         } else {
           gameOverScreen();
           shouldStart = true;
@@ -392,8 +435,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
           //b2d.clearWorld();
           shouldStart = false;
           console.log(playing);
-          stage.removeAllChildren();
           createjs.Sound.stop('melody');
+          stage.removeAllChildren();
           shouldUpdate = false;
           //createjs.Ticker.removeEventListener('tick', onTick);
           //titleScreen();
@@ -444,7 +487,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
           onReady();
           playing = true;
           shouldUpdate = true;
-
         }
       } else {
 
@@ -559,8 +601,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     ship = assetManager.getSprite(sSheet);
     ship.x = shipData.spawnX;
     ship.y = shipData.spawnY;
-    ship.scaleY = 2;
-    ship.scaleX = 2;
     ship.endOfLevel = false;
     ship.fly = false;
     ship.gotoAndPlay(shipData.animation);
