@@ -19,7 +19,7 @@ var worldData = {
           animation: 'rocket',
           id: 'ship',
           width: 1,
-          height: 30
+          height: 28
         },
       baddys: [
         {
@@ -29,7 +29,7 @@ var worldData = {
           patTwo: 520,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -39,7 +39,7 @@ var worldData = {
           patTwo: 1000,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -49,18 +49,18 @@ var worldData = {
           patTwo: 1070,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         // pit baddys
         {
           spawnX: 2300,
           spawnY: 466,
-          patOne: 2225,
+          patOne: 2280,
           patTwo: 2440,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -70,7 +70,7 @@ var worldData = {
           patTwo: 2570,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -80,7 +80,7 @@ var worldData = {
           patTwo: 2750,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -90,7 +90,7 @@ var worldData = {
           patTwo: 2700,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -100,7 +100,7 @@ var worldData = {
           patTwo: 1320,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -110,7 +110,7 @@ var worldData = {
           patTwo: 1680,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         },
         {
@@ -120,7 +120,7 @@ var worldData = {
           patTwo: 3400,
           id: 'baddy',
           animation: 'moveLeft',
-          width: 12,
+          width: 13,
           height: 13
         }
       ],

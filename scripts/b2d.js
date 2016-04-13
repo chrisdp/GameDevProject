@@ -389,7 +389,7 @@ var B2d = function() {
         if (actors[i].id === 'ship') {
           //console.log(actors[i]);
           if (ship.fly) {
-            console.log('fly!');
+            //console.log('fly!');
             if (vel.y > -2) {
               forceY = -3;
               move = true;

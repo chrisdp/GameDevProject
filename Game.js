@@ -250,7 +250,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
   function splashUpdate() {
     if (gamepadConnected) {
       updateStatus();
-      if (controllers[0].buttons[0].pressed) {
+      if (controllers[0].buttons[9].pressed) {
         if (shouldStart) {
           startWithController();
           shouldStart = false;
@@ -319,6 +319,12 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     });
     stage.addChild(button,title);
     stage.update();
+  }
+
+  function resetWithController() {
+    setTimeout(resetDown, 100);
+    setTimeout(resetUp, 200);
+    setTimeout(resetClick, 300);
   }
 
   function resetDown() {
@@ -450,7 +456,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
 
         if ((start.pressed) && (shouldStart)) {
           if (data.endOfLevel) {
-            resetClick();
+            shouldUpdate = false;
+            resetWithController();
+            shouldUpdate = true;
           } else {
             //b2d.clearWorld();
             shouldStart = false;
@@ -473,14 +481,14 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
           }
         }
 
-        if (xAxe > 0.25) {
+        if (xAxe > 0.10) {
           if (dude.currentAnimation !== 'dudeMoveRight') {
             dude.gotoAndPlay('dudeMoveRight');
           }
           b2d.movePlayer('right', (xAxe * 4));
         }
 
-        if (xAxe < -0.25) {
+        if (xAxe < -0.10) {
           if (dude.currentAnimation !== 'dudeMoveLeft') {
             dude.gotoAndPlay('dudeMoveLeft');
           }
@@ -499,7 +507,9 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
       if (!playing) {
         if ((enter) && (!playing)) {
           if (data.endOfLevel) {
-            resetClick();
+            shouldUpdate = false;
+            resetWithController();
+            shouldUpdate = true;
           } else {
             //b2d.clearWorld();
             shouldStart = false;
