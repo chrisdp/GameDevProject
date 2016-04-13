@@ -8,7 +8,7 @@ var worldData = {
           id: 'player',
           width: 9,
           height: 21,
-          hp: 10,
+          hp: 5,
           points: 0
         }
 
@@ -35,10 +35,10 @@ var worldData = {
           height: 13
         },
         {
-          spawnX: 1088,
+          spawnX: 1060,
           spawnY: 466,
           patOne: 1005,
-          patTwo: 1100,
+          patTwo: 1070,
           id: 'baddy',
           animation: 'moveLeft',
           width: 12,
@@ -80,6 +80,26 @@ var worldData = {
           spawnY: 400,
           patOne: 2600,
           patTwo: 2700,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 12,
+          height: 13
+        },
+        {
+          spawnX: 1200,
+          spawnY: 50,
+          patOne: 1070,
+          patTwo: 1320,
+          id: 'baddy',
+          animation: 'moveLeft',
+          width: 12,
+          height: 13
+        },
+        {
+          spawnX: 1550,
+          spawnY: 150,
+          patOne: 1515,
+          patTwo: 1680,
           id: 'baddy',
           animation: 'moveLeft',
           width: 12,
@@ -267,13 +287,31 @@ var worldData = {
           id: 'floor',
           restitution: 0,
           animation: 'platform'
+        },
+        { // p20
+          spawnX: 1200,
+          spawnY: 100,
+          width: 150,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
+        },
+        { // p21
+          spawnX: 1600,
+          spawnY: 200,
+          width: 150,
+          height: 10,
+          id: 'floor',
+          restitution: 0,
+          animation: 'platform'
         }
       ],
       stars: [
         // star group one
         {
           spawnX: 255,
-          spawnY: 20,
+          spawnY: 40,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -282,7 +320,7 @@ var worldData = {
         },
         {
           spawnX: 330,
-          spawnY: 20,
+          spawnY: 40,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -291,7 +329,7 @@ var worldData = {
         },
         {
           spawnX: 400,
-          spawnY: 20,
+          spawnY: 40,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -428,7 +466,7 @@ var worldData = {
 
         {
           spawnX: 780,
-          spawnY: 130,
+          spawnY: 140,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -437,7 +475,7 @@ var worldData = {
         },
         {
           spawnX: 850,
-          spawnY: 130,
+          spawnY: 140,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -446,7 +484,7 @@ var worldData = {
         },
         {
           spawnX: 920,
-          spawnY: 130,
+          spawnY: 140,
           id: 'star',
           animation: 'star',
           width: 10,
@@ -519,6 +557,24 @@ var worldData = {
         {
           spawnX: 1255,
           spawnY: 462,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1480,
+          spawnY: 140,
+          id: 'star',
+          animation: 'star',
+          width: 10,
+          height: 10,
+          restitution: 1
+        },
+        {
+          spawnX: 1720,
+          spawnY: 140,
           id: 'star',
           animation: 'star',
           width: 10,

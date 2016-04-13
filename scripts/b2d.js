@@ -333,7 +333,7 @@ var B2d = function() {
                 actors[i].skin.gotoAndPlay('moveLeft');
               }
               if (vel.x > -1) {
-                force = -10;
+                force = -3;
               }
             } else {
               actors[i].skin.direction = false;
@@ -347,7 +347,7 @@ var B2d = function() {
               }
               if (vel.x < 1) {
                 //console.log('changed force');
-                force = 10;
+                force = 3;
               }
             } else {
               actors[i].skin.direction = true;
@@ -461,9 +461,9 @@ var B2d = function() {
     spriteBodyDef.fixedRotation = true;
     spriteBodyDef.position.x = skin.x / SCALE;
     spriteBodyDef.position.y = skin.y / SCALE;
+
     //spriteBodyDef.gravityScale = 0;
     var sprite = world.CreateBody(spriteBodyDef);
-
     sprite.CreateFixture(fixture);
 
     return sprite;
@@ -562,6 +562,13 @@ var B2d = function() {
 
   var bodysPrint = function() {
     console.log(actors);
+    for (var i = 0; i < bodies.length; i++) {
+      console.log(bodies[i].GetUserData().id);
+      if (bodies[i].GetUserData().id === 'baddy') {
+        bodies[i].m_mass = 5;
+        bodies[i].m_invMass = 5;
+      }
+    }
     console.log(bodies);
   };
 
