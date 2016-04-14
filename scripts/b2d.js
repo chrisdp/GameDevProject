@@ -30,6 +30,10 @@ var B2d = function() {
   var playerDead = false;
   var points = 0;
   var ship = null;
+  var data = null;
+  var dataflag = true;
+  var offset = 0;
+  var player = null;
 
   // state vars
   var touchingDown = false;
@@ -38,6 +42,7 @@ var B2d = function() {
   var numOfFloor = 0;
   // colision detetors
   var listener = new Box2D.Dynamics.b2ContactListener();
+
   listener.BeginContact = function(contact) {
     var firstObject = contact.GetFixtureA().GetBody().GetUserData();
     var firstSkin = contact.GetFixtureA().GetBody().GetUserData().skin;
@@ -141,7 +146,6 @@ var B2d = function() {
       }
 
       if ((firstObject.id === 'player') && (secondObject.id === 'ship')) {
-        console.log(bodies[0].GetUserData());
         firstObject.skin.visible = false;
         //ship = secondObject.skin;
         stopPlayer();
@@ -155,7 +159,6 @@ var B2d = function() {
   var flyShip = function() {
     ship.removeEventListener('animationend', flyShip);
     ship.fly = true;
-    console.log('start moving');
   };
 
   // returns the index of the smallest value in the array
@@ -322,7 +325,6 @@ var B2d = function() {
     debugDraw.SetFillAlpha(0.7);
     debugDraw.SetLineThickness(1.0);
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-    //if (bodies[0] != undefined) {
     if (false) {
 
     }
@@ -330,9 +332,7 @@ var B2d = function() {
   };
 
   // box2d update function. delta time is used to avoid differences in simulation if frame rate drops
-  var offset = 0;
   var update = function() {
-    //console.log('updating');
     var now = Date.now();
     var dt = now - lastTimestamp;
     fixedTimestepAccumulator += dt;
@@ -358,7 +358,6 @@ var B2d = function() {
         if (actors[i].id === 'baddy') {
           if (actors[i].skin.direction) {
             if (actors[i].skin.patOne < actors[i].skin.x) {
-              //console.log('pat one is less then x');
               if (actors[i].skin.currentAnimation !== 'moveLeft') {
                 actors[i].skin.gotoAndPlay('moveLeft');
               }
@@ -371,13 +370,10 @@ var B2d = function() {
             }
           } else {
             if (actors[i].skin.patTwo > actors[i].skin.x) {
-              //console.log('pat two : ' + actors[i].skin.patTwo + ' is grater then x: ' + actors[i].skin.x);
-              //console.log(vel);
               if (actors[i].skin.currentAnimation !== 'moveRight') {
                 actors[i].skin.gotoAndPlay('moveRight');
               }
               if (vel.x < 1) {
-                //console.log('changed force');
                 forceX = 3;
                 move = true;
               }
@@ -387,9 +383,7 @@ var B2d = function() {
           }
         }
         if (actors[i].id === 'ship') {
-          //console.log(actors[i]);
           if (ship.fly) {
-            //console.log('fly!');
             if (vel.y > -2) {
               forceY = -3;
               move = true;
@@ -444,7 +438,6 @@ var B2d = function() {
 
   // actor object - this is responsible for taking the body's position and translating it to your easel display object
   var actorObject = function(body, skin, data) {
-
     this.body = body;
     this.skin = skin;
     this.id = data.id;
@@ -499,14 +492,12 @@ var B2d = function() {
   };
 
   var bodieMake = function(skin, fixture) {
-
     var spriteBodyDef = new b2BodyDef;
     spriteBodyDef.type = b2Body.b2_dynamicBody;
     spriteBodyDef.fixedRotation = true;
     spriteBodyDef.position.x = skin.x / SCALE;
     spriteBodyDef.position.y = skin.y / SCALE;
 
-    //spriteBodyDef.gravityScale = 0;
     var sprite = world.CreateBody(spriteBodyDef);
     sprite.CreateFixture(fixture);
 
@@ -515,7 +506,6 @@ var B2d = function() {
 
   var canRunSound = null;
   var movePlayer = function(where, speed) {
-    //var player = bodies[0].GetUserData();
     var vel = bodies[0].GetLinearVelocity();
     var forceX = 0;
     var forceY = 0;
@@ -541,7 +531,6 @@ var B2d = function() {
     case 'up':
       if ((touchingDown) && (vel.y > -3)) {
         forceY = -250;
-        console.log(numOfFloor);
         createjs.Sound.play('jump');
         if (vel.y < -3) {
           touchingDown = false;
@@ -553,6 +542,8 @@ var B2d = function() {
       break;
     }
     bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
+
+    // TODO: revisit running sound
     /*
         if ((vel.x !== 0) && (touchingDown) && (vel.y === 0)) {
           console.log(vel.x + ' ' + touchingDown + ' ' + vel.y);
@@ -570,51 +561,44 @@ var B2d = function() {
         */
   };
 
-  var data = null;
-  var dataflag = true;
   var playerData = function() {
 
     if (dataflag) {
-      //console.log(ship);
       data = {
-      pos: {
+        pos: {
         x: (playerDead) ? 0 : bodies[0].GetUserData().skin.x,
         y: (playerDead) ? 0 : bodies[0].GetUserData().skin.y
       },
-      hitPoints: (playerDead) ? 0 : bodies[0].GetUserData().skin.hp,
-      vel: (playerDead) ? {x: 0, y: 0} : bodies[0].GetLinearVelocity(),
-      touchingDown: touchingDown,
-      touchingFloor: touchingFloor,
-      sideHit: sideHit,
-      points: points,
-      endOfLevel: ship.endOfLevel
-    };
+        hitPoints: (playerDead) ? 0 : bodies[0].GetUserData().skin.hp,
+        vel: (playerDead) ? {x: 0, y: 0} : bodies[0].GetLinearVelocity(),
+        touchingDown: touchingDown,
+        touchingFloor: touchingFloor,
+        sideHit: sideHit,
+        points: points,
+        endOfLevel: ship.endOfLevel
+      };
       if (playerDead) {
         dataflag = false;
       }
     }
-
     return data;
   };
 
   // remove actor and it's skin object
   var removeActor = function(actor) {
-    //if (actors.length > 0) {
-    //console.log(actor);
     stage.removeChild(actor.skin);
     actors.splice(actors.indexOf(actor),1);
-    //}
   };
 
   var bodysPrint = function() {
-    console.log(actors);
     for (var i = 0; i < bodies.length; i++) {
-      console.log(bodies[i].GetUserData().id);
       if (bodies[i].GetUserData().id === 'baddy') {
         bodies[i].m_mass = 5;
         bodies[i].m_invMass = 5;
       } else if (bodies[i].GetUserData().id === 'ship') {
         ship = bodies[i].GetUserData().skin;
+      } else if (bodies[i].GetUserData().id === 'player') {
+        player = bodies[i];
       }
     }
     console.log(bodies);
