@@ -16,30 +16,30 @@ var B2d = function() {
   var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 
   // important box2d scale and speed vars
-  var SCALE = 30;
-  var STEP = 20;
-  var TIMESTEP = 1 / STEP;
+  var SCALE;
+  var STEP;
+  var TIMESTEP;
 
   var world;
-  var lastTimestamp = Date.now();
-  var fixedTimestepAccumulator = 0;
-  var bodiesToRemove = [];
-  var actors = [];
-  var bodies = [];
-  var stars = [];
-  var playerDead = false;
-  var points = 0;
-  var ship = null;
-  var data = null;
-  var dataflag = true;
-  var offset = 0;
-  var player = null;
+  var lastTimestamp;
+  var fixedTimestepAccumulator ;
+  var bodiesToRemove;
+  var actors;
+  var bodies;
+  var stars;
+  var playerDead;
+  var points;
+  var ship;
+  var data;
+  var dataflag;
+  var offset;
+  var player;
 
   // state vars
-  var touchingDown = false;
-  var touchingFloor = false;
-  var sideHit = null;
-  var numOfFloor = 0;
+  var touchingDown;
+  var touchingFloor;
+  var sideHit;
+  var numOfFloor;
   // colision detetors
   var listener = new Box2D.Dynamics.b2ContactListener();
 
@@ -195,7 +195,7 @@ var B2d = function() {
         forceY = -100;
       }
       stopPlayer();
-      player.ApplyForce(new b2Vec2(forceX, forceY), player.GetWorldCenter());
+      forcePlayer(forceX, forceY);
     }
   };
 
@@ -283,13 +283,13 @@ var B2d = function() {
 
     // assign actor for floor
     var actor = new actorObject(floor, sprite, platform);
-
     floor.SetUserData(actor);
   };
 
   // box2d world setup and boundaries
   var setup = function(platform, spriteId) {
     console.log('>> phsycs starting');
+    defaults();
     world = new b2World(new b2Vec2(0,10), true);
     world.SetContactListener(listener);
     addDebug();
@@ -589,12 +589,12 @@ var B2d = function() {
     player.SetAngularVelocity(0);
   };
 
-  var defaults = function() {
-    // important box2d scale and speed vars
+  function defaults() {
     SCALE = 30;
     STEP = 20;
     TIMESTEP = 1 / STEP;
 
+    world;
     lastTimestamp = Date.now();
     fixedTimestepAccumulator = 0;
     bodiesToRemove = [];
@@ -603,13 +603,17 @@ var B2d = function() {
     stars = [];
     playerDead = false;
     points = 0;
+    ship = null;
+    data = null;
+    dataflag = true;
+    offset = 0;
+    player = null;
 
     // state vars
     touchingDown = false;
     touchingFloor = false;
     sideHit = null;
     numOfFloor = 0;
-    dataflag = true;
   };
 
   var playerMass = function(mass, iMass) {

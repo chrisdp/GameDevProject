@@ -554,10 +554,8 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     console.log('>> setup');
     // kill event listener
     stuff = true;
-    b2d.defaults();
     playing = true;
     title = null;
-    //stage.removeEventListener('onAllAssetsLoaded', onReady);
 
     b2d.setup();
 
