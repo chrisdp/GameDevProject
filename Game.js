@@ -616,7 +616,6 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     dude.gotoAndPlay(playerData.animation);
     stage.addChild(dude);
     b2d.spriteMake(dude, playerData);
-    b2d.playerMass(1.4311111111111112, 0.6987577639751552);
 
     var baddyData = worldData.levelOne.baddys;
 
@@ -683,6 +682,7 @@ var buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 
     stage.addChild(txtScoreOutline, txtScore);
 
     b2d.bodysPrint();
+    b2d.playerMass(1.4311111111111112, 0.6987577639751552);
 
     createjs.Ticker.setFPS(24);
     createjs.Ticker.useRAF = true;

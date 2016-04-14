@@ -63,14 +63,13 @@ var B2d = function() {
               touchingFloor = true;
               numOfFloor++;
             }
-            // TODO: fix jump enabled when touching star
             touchingDown = true;
           }
         }
       }
     }
 
-    var swapBodies = function() {
+    function swapBodies() {
       var tempy = secondSkin;
       secondSkin = firstSkin;
       firstSkin = tempy;
@@ -122,7 +121,7 @@ var B2d = function() {
           sideHit = 'top';
           kill(secondBody);
           createjs.Sound.play('baddydeath');
-          addPoint(firstSkin, 40);
+          addPoint(40);
         } else if (side == 3) {
           sideHit = 'bottom';
           playerDamage(firstSkin);
@@ -136,7 +135,7 @@ var B2d = function() {
 
       if ((firstObject.id === 'player') && (secondObject.id === 'star')) {
         kill(secondBody);
-        addPoint(firstBody, 100);
+        addPoint(100);
         createjs.Sound.play('point');
       }
 
@@ -156,13 +155,13 @@ var B2d = function() {
     }
   };
 
-  var flyShip = function() {
+  function flyShip() {
     ship.removeEventListener('animationend', flyShip);
     ship.fly = true;
   };
 
   // returns the index of the smallest value in the array
-  var indexOfSmallest = function(a) {
+  function indexOfSmallest(a) {
     var lowest = 0;
     for (var i = 1; i < a.length; i++) {
       if (a[i] < a[lowest]) {
@@ -173,16 +172,16 @@ var B2d = function() {
   };
 
   // add the passed body to the array of bodies to remove from the game
-  var kill = function(baddy) {
-    bodiesToRemove.push(baddy);
+  function kill(body) {
+    bodiesToRemove.push(body);
   };
 
   // remove HP from player and handle 0 HP
-  var playerDamage = function(player) {
-    player.hp--;
+  function playerDamage() {
+    var hp = player.GetUserData().skin.hp-- - 1;
     createjs.Sound.play('playerdamage');
-    if (player.hp <= 0) {
-      kill(bodies[0]);
+    if (hp <= 0) {
+      kill(player);
       playerDead = true;
       createjs.Sound.play('gameover1');
     } else {
@@ -196,11 +195,11 @@ var B2d = function() {
         forceY = -100;
       }
       stopPlayer();
-      bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
+      player.ApplyForce(new b2Vec2(forceX, forceY), player.GetWorldCenter());
     }
   };
 
-  var addPoint = function(player, point) {
+  function addPoint(point) {
     var ammount = (point === undefined) ? 10 : point;
     points += ammount;
   };
@@ -325,9 +324,6 @@ var B2d = function() {
     debugDraw.SetFillAlpha(0.7);
     debugDraw.SetLineThickness(1.0);
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-    if (false) {
-
-    }
     world.SetDebugDraw(debugDraw);
   };
 
@@ -437,7 +433,7 @@ var B2d = function() {
   };
 
   // actor object - this is responsible for taking the body's position and translating it to your easel display object
-  var actorObject = function(body, skin, data) {
+  function actorObject(body, skin, data) {
     this.body = body;
     this.skin = skin;
     this.id = data.id;
@@ -479,19 +475,13 @@ var B2d = function() {
 
     // assign actor
     var actor = new actorObject(sprite, skin, data);
-    //setActorProps(actor,data);
 
-    sprite.SetUserData(actor);  // set the actor as user data of the body so we can use it later: body.GetUserData()
+    // set the actor as user data of the body so we can use it later: body.GetUserData()
+    sprite.SetUserData(actor);
     stars.push(sprite);
   };
 
-  var setActorProps = function(actor, data) {
-    actor.id = data.id;
-    actor.Xdif = data.width;
-    actor.Ydif = data.height;
-  };
-
-  var bodieMake = function(skin, fixture) {
+  function bodieMake(skin, fixture) {
     var spriteBodyDef = new b2BodyDef;
     spriteBodyDef.type = b2Body.b2_dynamicBody;
     spriteBodyDef.fixedRotation = true;
@@ -504,9 +494,8 @@ var B2d = function() {
     return sprite;
   };
 
-  var canRunSound = null;
   var movePlayer = function(where, speed) {
-    var vel = bodies[0].GetLinearVelocity();
+    var vel = player.GetLinearVelocity();
     var forceX = 0;
     var forceY = 0;
     var maxVel = 4;
@@ -541,36 +530,23 @@ var B2d = function() {
       forceY = 100;
       break;
     }
-    bodies[0].ApplyForce(new b2Vec2(forceX, forceY), bodies[0].GetWorldCenter());
-
-    // TODO: revisit running sound
-    /*
-        if ((vel.x !== 0) && (touchingDown) && (vel.y === 0)) {
-          console.log(vel.x + ' ' + touchingDown + ' ' + vel.y);
-          if (canRunSound) {
-            createjs.Sound.play('running', {loop: -1});
-            canRunSound = false;
-          }
-        } else {
-          if (!canRunSound) {
-            console.log('stop that?');
-            createjs.Sound.stop('running');
-            canRunSound = true;
-          }
-        }
-        */
+    forcePlayer(forceX, forceY);
   };
+
+  function forcePlayer(forceX, forceY) {
+    player.ApplyForce(new b2Vec2(forceX, forceY), player.GetWorldCenter());
+  }
 
   var playerData = function() {
 
     if (dataflag) {
       data = {
         pos: {
-        x: (playerDead) ? 0 : bodies[0].GetUserData().skin.x,
-        y: (playerDead) ? 0 : bodies[0].GetUserData().skin.y
+        x: (playerDead) ? 0 : player.GetUserData().skin.x,
+        y: (playerDead) ? 0 : player.GetUserData().skin.y
       },
-        hitPoints: (playerDead) ? 0 : bodies[0].GetUserData().skin.hp,
-        vel: (playerDead) ? {x: 0, y: 0} : bodies[0].GetLinearVelocity(),
+        hitPoints: (playerDead) ? 0 : player.GetUserData().skin.hp,
+        vel: (playerDead) ? {x: 0, y: 0} : player.GetLinearVelocity(),
         touchingDown: touchingDown,
         touchingFloor: touchingFloor,
         sideHit: sideHit,
@@ -585,7 +561,7 @@ var B2d = function() {
   };
 
   // remove actor and it's skin object
-  var removeActor = function(actor) {
+  function removeActor(actor) {
     stage.removeChild(actor.skin);
     actors.splice(actors.indexOf(actor),1);
   };
@@ -609,8 +585,8 @@ var B2d = function() {
   };
 
   var stopPlayer = function() {
-    bodies[0].SetLinearVelocity(new b2Vec2(0,0));
-    bodies[0].SetAngularVelocity(0);
+    player.SetLinearVelocity(new b2Vec2(0,0));
+    player.SetAngularVelocity(0);
   };
 
   var defaults = function() {
@@ -637,8 +613,8 @@ var B2d = function() {
   };
 
   var playerMass = function(mass, iMass) {
-    bodies[0].m_mass = mass;
-    bodies[0].m_invMass = iMass;
+    player.m_mass = mass;
+    player.m_invMass = iMass;
   };
 
   return {
